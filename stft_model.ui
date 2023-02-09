@@ -34,6 +34,16 @@
     <string>STFT Model</string>
    </property>
   </widget>
+  <widget class="QGraphicsView" name="graphicsView">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>90</y>
+     <width>501</width>
+     <height>431</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

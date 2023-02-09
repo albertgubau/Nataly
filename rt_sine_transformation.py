@@ -158,10 +158,6 @@ class Rt_sine_transformation(QWidget):
         # Half spectrum because of essentia computation
         self.f = np.linspace(0, self.RATE // 2, self.CHUNK // 2 + 1)  # 1025 numbers from 0 to 22050 (frequencies)
 
-    def start(self):
-        if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-            QApplication.instance().exec_()
-
     def set_plotdata(self, name, data_x, data_y):
 
         if name in self.traces:
@@ -280,7 +276,7 @@ class Rt_sine_transformation(QWidget):
         timer = QtCore.QTimer()
         timer.timeout.connect(self.update_plots)
         timer.start(20)
-        self.start()
+        QApplication.instance().exec_()
 
     def saveResult(self):
         awrite(self.result)
