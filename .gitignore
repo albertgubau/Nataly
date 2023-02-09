@@ -1,0 +1,26 @@
+*.DS_Store
+*.so
+*.pyc
+*.o
+*.obj
+*.lib
+*.exp
+*.py~
+*.sln
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+software/.vs/*
+workspace_dev/*
+workspace/*
+!workspace/.gitkeep
+software/models_interface/output_sounds/*.wav
+software/transformations_interface/output_sounds/*.wav
+.ipynb_checkpoints/
+software/models/utilFunctions_C/utilFunctions_C.cp310-win_amd64.pyd
+software/models/utilFunctions_C/utilFunctions_C.cp39-win_amd64.pyd
+software/models_GUI.pyproj
