@@ -12,20 +12,23 @@ from PyQt5.QtCore import Qt
 import time
 import sys
 
+fs = 44100
+
+
 # Instantiate the Essentia Algorithms
 w = es.Windowing(type='hamming', size=2048)
 fft = es.FFT(size=2048)
-sineAnal = es.SineModelAnal(sampleRate=44100,
+sineAnal = es.SineModelAnal(sampleRate=fs,
                             maxnSines=150,
                             magnitudeThreshold=-120,
                             freqDevOffset=10,
                             freqDevSlope=0.001)
 
-sineSynth = es.SineModelSynth(sampleRate=44100, fftSize=2048, hopSize=522)
+sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=2048, hopSize=512)
 ifft = es.IFFT(size=2048)
 overl = es.OverlapAdd(frameSize=2048, hopSize=512)
-awrite = es.MonoWriter(filename='output.wav', sampleRate=44100)
-awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=44100)
+awrite = es.MonoWriter(filename='output.wav', sampleRate=fs)
+awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
 
 
 class Slider(QWidget):
@@ -67,6 +70,9 @@ class Rt_sine_transformation(QWidget):
         # Add Widgets to the Layout
         self.slider = Slider(0, 2)
         layout.addWidget(self.slider)
+
+        self.listen_checkbox = QCheckBox("Listen?")
+        layout.addWidget(self.listen_checkbox)
 
         # Set the Layout on the application window
         self.setLayout(layout)
@@ -129,13 +135,15 @@ class Rt_sine_transformation(QWidget):
 
         self.iterations = 0
         self.wf_data = np.array([])
+        self.listening = True
 
-        self.prova = np.array([])
+        # self.prova = np.array([])
+
 
         # PyAudio Stuff
         self.FORMAT = pyaudio.paFloat32
         self.CHANNELS = 1  # Mono
-        self.RATE = 44100  # Sampling rate in Hz (samples/second)
+        self.RATE = fs  # Sampling rate in Hz (samples/second)
         self.CHUNK = 2048  # Number of samples per frame (audio frame with frameSize = 2048)
 
         self.p = pyaudio.PyAudio()  # Instance pyAudio class
@@ -199,7 +207,7 @@ class Rt_sine_transformation(QWidget):
             struct.unpack(str(self.CHUNK) + 'f',
                           self.wf_data))  # str(self.CHUNK) + 'h' denotes size and type of data
 
-        self.prova = np.append(self.prova, self.wf_data)
+        # self.prova = np.append(self.prova, self.wf_data)
 
         # Aqui hem llegit un frame de 2048 samples provinent del micro, el plotegem
         self.set_plotdata(name='waveform', data_x=self.freqs, data_y=self.wf_data)
@@ -265,11 +273,15 @@ class Rt_sine_transformation(QWidget):
         self.result = np.append(self.result, out)
 
         # We cut the signal to not lag the program with large arrays
-        # if(len(self.result)>=4097):
-        # self.result = self.result[len(self.result) - 4096:]
+        if len(self.result) >= 4097:
+            self.result = self.result[len(self.result) - 4096:]
 
-        sd.play(self.result[len(self.result) - 4096:], 44100)
-        time.sleep(0.01)
+        # If we are in the Real-Time Sine Transformations window and the listening checkbox is checked
+        # we play the sound
+        if self.listening and self.listen_checkbox.isChecked():
+            sd.play(self.result[len(self.result) - 4096:], fs)
+
+        #time.sleep(0.01)
         self.iterations = 1
 
     def animation(self):
@@ -279,9 +291,6 @@ class Rt_sine_transformation(QWidget):
         QApplication.instance().exec_()
 
     def saveResult(self):
+
         awrite(self.result)
-        awrite2(self.prova)
-
-
-
-
+        # awrite2(self.prova)
