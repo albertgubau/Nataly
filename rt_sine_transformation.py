@@ -14,7 +14,6 @@ import sys
 
 fs = 44100
 
-
 # Instantiate the Essentia Algorithms
 w = es.Windowing(type='hamming', size=2048)
 fft = es.FFT(size=2048)
@@ -135,10 +134,9 @@ class Rt_sine_transformation(QWidget):
 
         self.iterations = 0
         self.wf_data = np.array([])
-        self.listening = True
+        self.listening = False
 
         # self.prova = np.array([])
-
 
         # PyAudio Stuff
         self.FORMAT = pyaudio.paFloat32
@@ -281,7 +279,6 @@ class Rt_sine_transformation(QWidget):
         if self.listening and self.listen_checkbox.isChecked():
             sd.play(self.result[len(self.result) - 4096:], fs)
 
-        #time.sleep(0.01)
         self.iterations = 1
 
     def animation(self):
