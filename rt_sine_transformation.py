@@ -94,7 +94,7 @@ class Rt_sine_transformation(QWidget):
         wf_xaxis.setTicks([wf_xlabels])
         wf_yaxis = pg.AxisItem(orientation='left')
 
-        # Waveform x/y axis labels
+        # Windowed Waveform x/y axis labels
         wf_w_xlabels = [(0, '0'), (2048, '2048'), (4096, '4096')]
         wf_w_xaxis = pg.AxisItem(orientation='bottom')
         wf_w_xaxis.setTicks([wf_w_xlabels])
