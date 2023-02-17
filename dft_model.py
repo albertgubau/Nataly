@@ -13,7 +13,6 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from PyQt5.QtCore import *
 
-
 fs = 44100
 
 # Instantiate the Essentia Algorithms
@@ -43,31 +42,37 @@ class Dft_model(QWidget):
         self.browse_button.clicked.connect(lambda: self.browse_file())
 
         pg.setConfigOptions(antialias=True)
-        self.win = pg.GraphicsLayoutWidget(self)
-        self.win.setGeometry(QRect(20, 160, 681, 141))
-        self.win.setBackground('w')
+        # self.win = pg.GraphicsLayoutWidget(self)
+        # self.win.setGeometry(QRect(20, 160, 681, 141))
+        # self.win.setBackground('w')
 
         self.win2 = pg.GraphicsLayoutWidget(self)
-        self.win2.setGeometry(QRect(20, 330, 681, 201))
+        self.win2.setGeometry(QRect(20, 160, 721, 371))
         self.win2.setBackground('w')
 
         # Interpret image data as row-major instead of col-major
         pg.setConfigOptions(imageAxisOrder='row-major')
 
-
         # Add plots to the window
-        self.waveform = self.win.addPlot(
-            title='WAVEFORM', row=1, col=1
-        )
+        # self.waveform = self.win.addPlot(
+        #    title='WAVEFORM', row=1, col=1
+        # )
 
         # Add plots to the window
         self.spectrogram = self.win2.addPlot(
             title='SPECTROGRAM', row=1, col=1
         )
+        # Add plots to the window
+        self.region = self.win2.addPlot(
+            title='REGION', row=2, col=1
+        )
 
         # Item for displaying image data
         self.img = pg.ImageItem()
         self.spectrogram.addItem(self.img)
+
+        self.img2 = pg.ImageItem()
+        self.region.addItem(self.img2)
 
         # Add a histogram with which to control the gradient of the image
         self.hist = pg.HistogramLUTItem()
@@ -77,14 +82,14 @@ class Dft_model(QWidget):
         self.win2.addItem(self.hist, row=1, col=2)
 
         # Custom ROI for selecting an image region
-        self.roi = pg.ROI([-8, 14], [6, 5], pen='r')
-        self.roi.addScaleHandle([0.5, 1], [0.5, 0.5])
-        self.roi.addScaleHandle([0, 0.5], [0.5, 0.5])
+        self.roi = pg.ROI([-8, 14], [6, 5], pen='r', handlePen='g', handleHoverPen='b')
+        self.roi.addScaleHandle([1, 1], [0, 0])
+        self.roi.addScaleHandle([0, 0], [1, 1])
+        self.roi.addScaleHandle([0, 1], [1, 0])
+        self.roi.addScaleHandle([1, 0], [0, 1])
         self.spectrogram.addItem(self.roi)
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.sigRegionChanged.connect(lambda: self.SelectedRegion())
-
-
 
         self.x = None
 
@@ -97,29 +102,29 @@ class Dft_model(QWidget):
             self.input_text_box.setText(str(fname[0]))  # We should modifiy the input text box
             self.x = es.MonoLoader(filename=self.input_text_box.text())()
             # print(self.input_text_box.text()) # Get the text from the text box (i.e, path to the input file)
-            self.waveform.clear()
+            # self.waveform.clear()
             self.img.clear()
-            self.waveform.plot(self.x, pen='g')
+            self.img2.clear()
+            # self.waveform.plot(self.x, pen='g')
 
-            spec = np.array([])
+            self.spec = np.array([])
 
             frames = 0
             for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
                 frame_spectrum = spectrum(w(frame))
 
                 if frames == 0:  # First frame
-                    spec = frame_spectrum
+                    self.spec = frame_spectrum
 
                 else:  # Next frames
-                    spec = np.vstack((spec, frame_spectrum))
+                    self.spec = np.vstack((self.spec, frame_spectrum))
 
-                frames+=1
+                frames += 1
 
-            #self.spectrogram.plot(np.transpose(spec), pen='g')
-
+            # self.spectrogram.plot(np.transpose(spec), pen='g')
 
             # Fit the min and max levels of the histogram to the data available
-            self.hist.setLevels(np.min(spec), np.max(spec))
+            self.hist.setLevels(np.min(self.spec), np.max(self.spec))
             # This gradient is roughly comparable to the gradient used by Matplotlib
             # You can adjust it and then save it using hist.gradient.saveState()
             self.hist.gradient.restoreState(
@@ -128,10 +133,27 @@ class Dft_model(QWidget):
                            (1.0, (246, 111, 0, 255)),
                            (0.0, (75, 0, 113, 255))]})
 
-            print(np.transpose(spec))
-            self.img.setImage(np.transpose(spec))
-            print(self.img.image)
+            spectrogram = np.transpose(self.spec)
+            self.img.setImage(spectrogram)
+            self.spectrogram.setYRange(0, 1000)
+            self.spectrogram.setXRange(0, spectrogram[0, :].size)
+            print(len(self.spec))
+            print(len(self.spec[0]))
 
     def SelectedRegion(self):
-        selected = self.roi.getArrayRegion(self.img.image,self.img)
-        print(selected[:,0].size)
+        self.selected, self.indexes = self.roi.getArrayRegion(self.img.image, self.img, returnMappedCoords=True)
+
+        self.img2.setImage((self.selected))
+
+        frames_start = int(self.indexes[1][0][0])
+        frames_end = int(self.indexes[1][-1][-1])
+
+        bins_start = int(self.indexes[0][0][0])
+        bins_end = int(self.indexes[0][-1][0])
+
+        for f in range(0, len(self.spec)):
+            for i in range(0, len(self.spec[0])):
+                if (f <= frames_start or f >= frames_end) and (i <= bins_start or i >= bins_end):
+                    self.spec[f][i] = 0.0
+
+        print(np.transpose(self.spec))
