@@ -35,11 +35,15 @@ awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
 class Dft_model(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         uic.loadUi('dft_model.ui', self)
 
         self.browse_button = self.findChild(QPushButton, "browse_btn")
         self.input_text_box = self.findChild(QLineEdit, "filename")
         self.browse_button.clicked.connect(lambda: self.browse_file())
+
+        self.compute_button = self.findChild(QPushButton, "compute_btn")
+        self.compute_button.clicked.connect(lambda: self.plot())
 
         pg.setConfigOptions(antialias=True)
         # self.win = pg.GraphicsLayoutWidget(self)
@@ -101,7 +105,7 @@ class Dft_model(QWidget):
         if fname:
             self.input_text_box.setText(str(fname[0]))  # We should modifiy the input text box
             self.x = es.MonoLoader(filename=self.input_text_box.text())()
-            # print(self.input_text_box.text()) # Get the text from the text box (i.e, path to the input file)
+
             # self.waveform.clear()
             self.img.clear()
             self.img2.clear()
@@ -121,8 +125,6 @@ class Dft_model(QWidget):
 
                 frames += 1
 
-            # self.spectrogram.plot(np.transpose(spec), pen='g')
-
             # Fit the min and max levels of the histogram to the data available
             self.hist.setLevels(np.min(self.spec), np.max(self.spec))
             # This gradient is roughly comparable to the gradient used by Matplotlib
@@ -133,27 +135,40 @@ class Dft_model(QWidget):
                            (1.0, (246, 111, 0, 255)),
                            (0.0, (75, 0, 113, 255))]})
 
-            spectrogram = np.transpose(self.spec)
-            self.img.setImage(spectrogram)
+            self.img.setImage(np.transpose(self.spec))
             self.spectrogram.setYRange(0, 1000)
-            self.spectrogram.setXRange(0, spectrogram[0, :].size)
-            print(len(self.spec))
-            print(len(self.spec[0]))
+            self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
 
     def SelectedRegion(self):
+
         self.selected, self.indexes = self.roi.getArrayRegion(self.img.image, self.img, returnMappedCoords=True)
 
-        self.img2.setImage((self.selected))
+        self.img2.clear()
+        self.img2.setImage(self.selected)
 
-        frames_start = int(self.indexes[1][0][0])
-        frames_end = int(self.indexes[1][-1][-1])
+        self.frames_start = int(self.indexes[1][0][0])
+        self.frames_end = int(self.indexes[1][-1][-1])
 
-        bins_start = int(self.indexes[0][0][0])
-        bins_end = int(self.indexes[0][-1][0])
+        self.bins_start = int(self.indexes[0][0][0])
+        self.bins_end = int(self.indexes[0][-1][0])
 
-        for f in range(0, len(self.spec)):
-            for i in range(0, len(self.spec[0])):
-                if (f <= frames_start or f >= frames_end) and (i <= bins_start or i >= bins_end):
-                    self.spec[f][i] = 0.0
+        self.synthesis()
 
-        print(np.transpose(self.spec))
+    def synthesis(self):
+
+        self.spec2 = np.copy(self.spec)
+
+        for f in range(0, len(self.spec2)):
+            for i in range(0, len(self.spec2[0])):
+                if (f <= self.frames_start or f >= self.frames_end) or (
+                        i <= self.bins_start or i >= self.bins_end):
+                    self.spec2[f][i] = 0.0
+
+        print(np.transpose(self.spec2))
+
+    def plot(self):
+        plt.figure()
+        # Plotting with Matplotlib in comparison
+        plt.pcolormesh(np.transpose(self.spec2))
+        plt.colorbar()
+        plt.show()
