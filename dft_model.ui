@@ -83,6 +83,19 @@
     <string>Compute</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="play_btn">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>110</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Play!</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

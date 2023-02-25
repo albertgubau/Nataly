@@ -44,6 +44,9 @@ class Dft_model(QWidget):
         self.compute_button = self.findChild(QPushButton, "compute_btn")
         self.compute_button.clicked.connect(lambda: self.plot())
 
+        self.play_button = self.findChild(QPushButton, "play_btn")
+        self.play_button.clicked.connect(lambda: self.play_result())
+
         pg.setConfigOptions(antialias=True)
         # self.win = pg.GraphicsLayoutWidget(self)
         # self.win.setGeometry(QRect(20, 160, 681, 141))
@@ -94,6 +97,7 @@ class Dft_model(QWidget):
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.sigRegionChanged.connect(lambda: self.SelectedRegion())
 
+        self.y = np.array([])
         self.x = None
         self.spec = None
         self.sinusoids = None
@@ -198,33 +202,33 @@ class Dft_model(QWidget):
                     self.magnitudes2[f][i] = 0.0
                     self.phases2[f][i] = 0.0
 
-    def plot(self):
-
-        y = np.array([])  # initialize output array
-
         frames = 0
 
-        for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
+        self.y = np.array([])
 
+        for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
             # Synthesis (with OverlapAdd and IFFT)
             fft_synth = sineSynth(self.magnitudes2[frames], self.sinusoids2[frames], self.phases2[frames])
 
             out = overl(ifft(fft_synth))
 
             # Save result
-            y = np.append(y, out)
+            self.y = np.append(self.y, out)
 
             frames += 1
 
         # Write the output file to the specified location
-        awrite(y)
+        awrite(self.y)
+
+
+
+    def plot(self):
 
         plt.figure()
         plt.subplot(2,1,1)
         # Plotting with Matplotlib in comparison
         plt.pcolormesh(np.transpose(self.spec2))
         plt.colorbar()
-
 
         # This plot is not correct I think, maybe for the result of applying the essentia function
         plt.subplot(2, 1, 2)
@@ -237,3 +241,6 @@ class Dft_model(QWidget):
             plt.title('frequencies of sinusoidal tracks')
 
         plt.show()
+
+    def play_result(self):
+        sd.play(self.y,fs)
