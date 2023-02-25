@@ -28,8 +28,7 @@ sineAnal = es.SineModelAnal(sampleRate=fs,
 sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=2048, hopSize=512)
 ifft = es.IFFT(size=2048)
 overl = es.OverlapAdd(frameSize=2048, hopSize=512)
-awrite = es.MonoWriter(filename='output.wav', sampleRate=fs)
-awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
+awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
 class Dft_model(QWidget):
@@ -96,6 +95,8 @@ class Dft_model(QWidget):
         self.roi.sigRegionChanged.connect(lambda: self.SelectedRegion())
 
         self.x = None
+        self.spec = None
+        self.sinusoids = None
 
     def browse_file(self):
         # Open File Dialog (returns a tuple)
@@ -112,16 +113,28 @@ class Dft_model(QWidget):
             # self.waveform.plot(self.x, pen='g')
 
             self.spec = np.array([])
+            self.sinusoids = np.array([])
 
             frames = 0
             for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
+
                 frame_spectrum = spectrum(w(frame))
+
+                infft = fft(w(frame))
+
+                sine_anal = sineAnal(infft)
 
                 if frames == 0:  # First frame
                     self.spec = frame_spectrum
+                    self.sinusoids = sine_anal[0]
+                    self.magnitudes = sine_anal[1]
+                    self.phases = sine_anal[2]
 
                 else:  # Next frames
                     self.spec = np.vstack((self.spec, frame_spectrum))
+                    self.sinusoids = np.vstack((self.sinusoids, sine_anal[0]))
+                    self.magnitudes = np.vstack((self.magnitudes, sine_anal[1]))
+                    self.phases = np.vstack((self.phases, sine_anal[1]))
 
                 frames += 1
 
@@ -149,8 +162,15 @@ class Dft_model(QWidget):
         self.frames_start = int(self.indexes[1][0][0])
         self.frames_end = int(self.indexes[1][-1][-1])
 
+        print(self.frames_start)
+        if(self.frames_start<=0):
+            self.frames_start = 0
+
         self.bins_start = int(self.indexes[0][0][0])
         self.bins_end = int(self.indexes[0][-1][0])
+
+        self.frequencies_start = (self.bins_start*fs)/2048 # Convert it to frequency values
+        self.frequencies_end = (self.bins_end*fs)/2048  # Convert it to frequency values
 
         self.synthesis()
 
@@ -158,17 +178,62 @@ class Dft_model(QWidget):
 
         self.spec2 = np.copy(self.spec)
 
-        for f in range(0, len(self.spec2)):
-            for i in range(0, len(self.spec2[0])):
-                if (f <= self.frames_start or f >= self.frames_end) or (
-                        i <= self.bins_start or i >= self.bins_end):
-                    self.spec2[f][i] = 0.0
-
+        ## Spectrogram synthesis (gives 0 values for non-selected regions of the spectrogram)
+        #for f in range(0, len(self.spec2)): # For every frame
+        #    for i in range(0, len(self.spec2[0])): # For every bin of the frame
+        #        if (f <= self.frames_start or f >= self.frames_end) or (i <= self.bins_start or i >= self.bins_end):
+        #            self.spec2[f][i] = 0.0
+        
         print(np.transpose(self.spec2))
 
+        self.sinusoids2 = np.copy(self.sinusoids)
+        self.magnitudes2 = np.copy(self.magnitudes)
+        self.phases2 = np.copy(self.phases)
+
+        # Sinusoids synthesis (gives 0 values for non-selected regions of the sinusoids)
+        for f in range(0, len(self.sinusoids2)): # For every frame
+            for i in range(0, len(self.sinusoids2[0])): # For every bin of the frame
+                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i]>=self.frequencies_end) or (f <= self.frames_start or f >= self.frames_end):
+                    self.sinusoids2[f][i] = 0.0
+                    self.magnitudes2[f][i] = 0.0
+                    self.phases2[f][i] = 0.0
+
     def plot(self):
+
+        y = np.array([])  # initialize output array
+
+        frames = 0
+
+        for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
+
+            # Synthesis (with OverlapAdd and IFFT)
+            fft_synth = sineSynth(self.magnitudes2[frames], self.sinusoids2[frames], self.phases2[frames])
+
+            out = overl(ifft(fft_synth))
+
+            # Save result
+            y = np.append(y, out)
+
+            frames += 1
+
+        # Write the output file to the specified location
+        awrite(y)
+
         plt.figure()
+        plt.subplot(2,1,1)
         # Plotting with Matplotlib in comparison
         plt.pcolormesh(np.transpose(self.spec2))
         plt.colorbar()
+
+
+        # This plot is not correct I think, maybe for the result of applying the essentia function
+        plt.subplot(2, 1, 2)
+        if (self.sinusoids2.shape[1] > 0):
+            numFrames = self.sinusoids2.shape[0]
+            frmTime = 512 * np.arange(numFrames) / float(fs)
+            self.sinusoids2[self.sinusoids2 <= 0] = np.nan
+            plt.plot(self.sinusoids2)
+            plt.axis([0, 187, 0, 22000])
+            plt.title('frequencies of sinusoidal tracks')
+
         plt.show()
