@@ -166,15 +166,14 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.frames_start = int(self.indexes[1][0][0])
         self.frames_end = int(self.indexes[1][-1][-1])
 
-        print(self.frames_start)
-        if(self.frames_start<=0):
+        if self.frames_start <= 0:
             self.frames_start = 0
 
         self.bins_start = int(self.indexes[0][0][0])
         self.bins_end = int(self.indexes[0][-1][0])
 
-        self.frequencies_start = (self.bins_start*fs)/2048 # Convert it to frequency values
-        self.frequencies_end = (self.bins_end*fs)/2048  # Convert it to frequency values
+        self.frequencies_start = (self.bins_start * fs) / 2048  # Convert it to frequency values
+        self.frequencies_end = (self.bins_end * fs) / 2048  # Convert it to frequency values
 
         self.synthesis()
 
@@ -183,64 +182,58 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.spec2 = np.copy(self.spec)
 
         ## Spectrogram synthesis (gives 0 values for non-selected regions of the spectrogram)
-        #for f in range(0, len(self.spec2)): # For every frame
+        # for f in range(0, len(self.spec2)): # For every frame
         #    for i in range(0, len(self.spec2[0])): # For every bin of the frame
         #        if (f <= self.frames_start or f >= self.frames_end) or (i <= self.bins_start or i >= self.bins_end):
         #            self.spec2[f][i] = 0.0
-        
-        print(np.transpose(self.spec2))
+
+        # print(np.transpose(self.spec2))
 
         self.sinusoids2 = np.copy(self.sinusoids)
         self.magnitudes2 = np.copy(self.magnitudes)
         self.phases2 = np.copy(self.phases)
 
+        self.y = np.array([])
         # Sinusoids synthesis (gives 0 values for non-selected regions of the sinusoids)
-        for f in range(0, len(self.sinusoids2)): # For every frame
-            for i in range(0, len(self.sinusoids2[0])): # For every bin of the frame
-                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i]>=self.frequencies_end) or (f <= self.frames_start or f >= self.frames_end):
+        for f in range(0, len(self.sinusoids2)):  # For every frame
+            for i in range(0, len(self.sinusoids2[0])):  # For every bin of the frame
+                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end) or (f <= self.frames_start or f >= self.frames_end):
                     self.sinusoids2[f][i] = 0.0
                     self.magnitudes2[f][i] = 0.0
                     self.phases2[f][i] = 0.0
 
-        frames = 0
-
-        self.y = np.array([])
-
-        for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
             # Synthesis (with OverlapAdd and IFFT)
-            fft_synth = sineSynth(self.magnitudes2[frames], self.sinusoids2[frames], self.phases2[frames])
+            fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f], self.phases2[f])
 
             out = overl(ifft(fft_synth))
 
             # Save result
             self.y = np.append(self.y, out)
 
-            frames += 1
-
         # Write the output file to the specified location
         awrite(self.y)
-
-
 
     def plot(self):
 
         plt.figure()
-        plt.subplot(2,1,1)
+        plt.subplot(2, 1, 1)
         # Plotting with Matplotlib in comparison
         plt.pcolormesh(np.transpose(self.spec2))
+        plt.xlabel("Frames")
+        plt.ylabel("Bins")
         plt.colorbar()
 
         # This plot is not correct I think, maybe for the result of applying the essentia function
         plt.subplot(2, 1, 2)
-        if (self.sinusoids2.shape[1] > 0):
-            numFrames = self.sinusoids2.shape[0]
-            frmTime = 512 * np.arange(numFrames) / float(fs)
+        if self.sinusoids2.shape[1] > 0:
             self.sinusoids2[self.sinusoids2 <= 0] = np.nan
             plt.plot(self.sinusoids2)
             plt.axis([0, 187, 0, 22000])
+            plt.xlabel("Frames")
+            plt.ylabel("Frequencies")
             plt.title('frequencies of sinusoidal tracks')
 
         plt.show()
 
     def play_result(self):
-        sd.play(self.y,fs)
+        sd.play(self.y, fs)
