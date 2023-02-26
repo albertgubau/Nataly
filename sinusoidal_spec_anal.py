@@ -95,12 +95,27 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.roi.addScaleHandle([1, 0], [0, 1])
         self.spectrogram.addItem(self.roi)
         self.roi.setZValue(10)  # make sure ROI is drawn above image
-        self.roi.sigRegionChanged.connect(lambda: self.SelectedRegion())
+        self.roi.sigRegionChangeFinished.connect(lambda: self.SelectedRegion())
+        self.roi.sigRegionChanged.connect(lambda: self.movedRegion())
 
-        self.y = np.array([])
+        self.y = None
         self.x = None
         self.spec = None
         self.sinusoids = None
+        self.phases2 = None
+        self.magnitudes2 = None
+        self.sinusoids2 = None
+        self.spec2 = None
+        self.frequencies_start = None
+        self.frequencies_end = None
+        self.bins_start = None
+        self.bins_end = None
+        self.frames_start = None
+        self.frames_end = None
+        self.phases = None
+        self.magnitudes = None
+        self.indexes = None
+        self.selected = None
 
     def browse_file(self):
         # Open File Dialog (returns a tuple)
@@ -156,12 +171,16 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.spectrogram.setYRange(0, 1000)
             self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
 
-    def SelectedRegion(self):
+    def movedRegion(self):
 
-        self.selected, self.indexes = self.roi.getArrayRegion(self.img.image, self.img, returnMappedCoords=True)
+        self.selected = self.roi.getArrayRegion(self.img.image, self.img)
 
         self.img2.clear()
         self.img2.setImage(self.selected)
+
+    def SelectedRegion(self):
+
+        self.selected, self.indexes = self.roi.getArrayRegion(self.img.image, self.img, returnMappedCoords=True)
 
         self.frames_start = int(self.indexes[1][0][0])
         self.frames_end = int(self.indexes[1][-1][-1])
@@ -178,16 +197,6 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.synthesis()
 
     def synthesis(self):
-
-        self.spec2 = np.copy(self.spec)
-
-        ## Spectrogram synthesis (gives 0 values for non-selected regions of the spectrogram)
-        # for f in range(0, len(self.spec2)): # For every frame
-        #    for i in range(0, len(self.spec2[0])): # For every bin of the frame
-        #        if (f <= self.frames_start or f >= self.frames_end) or (i <= self.bins_start or i >= self.bins_end):
-        #            self.spec2[f][i] = 0.0
-
-        # print(np.transpose(self.spec2))
 
         self.sinusoids2 = np.copy(self.sinusoids)
         self.magnitudes2 = np.copy(self.magnitudes)
@@ -214,11 +223,11 @@ class Sinusoidal_Spec_Anal(QWidget):
         awrite(self.y)
 
     def plot(self):
-
+        plt.close()
         plt.figure()
         plt.subplot(2, 1, 1)
         # Plotting with Matplotlib in comparison
-        plt.pcolormesh(np.transpose(self.spec2))
+        plt.pcolormesh(np.transpose(self.spec))
         plt.xlabel("Frames")
         plt.ylabel("Bins")
         plt.colorbar()
