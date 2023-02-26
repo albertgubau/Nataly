@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>541</height>
+    <width>746</width>
+    <height>548</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,20 +18,20 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>301</width>
+     <width>661</width>
      <height>91</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>35</pointsize>
+     <family>DejaVu Sans</family>
+     <pointsize>21</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>DFT Model</string>
+    <string>Sinusoidal Model Spectrogram Analyzer</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="filename">

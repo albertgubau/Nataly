@@ -1,7 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
-from dft_model import Dft_model
+from sinusoidal_spec_anal import Sinusoidal_Spec_Anal
 from stft_model import Stft_model
 from rt_sine_transformation import Rt_sine_transformation
 
@@ -12,16 +12,11 @@ class MainWindow(QMainWindow):
         uic.loadUi('main.ui', self)
 
         self.page1_btn.clicked.connect(self.go_to_first)
-        self.page2_btn.clicked.connect(self.go_to_second)
-        self.page3_btn.clicked.connect(self.go_to_third)
+        self.page3_btn.clicked.connect(self.go_to_second)
 
         # First page
-        self.dft_tab = Dft_model()
-        self.stackedWidget.addWidget(self.dft_tab)  # Add page to the stacked widget
-
-        # Second page
-        self.stft_tab = Stft_model()
-        self.stackedWidget.addWidget(self.stft_tab)  # Add page to the stacked widget
+        self.sinusoidal_spec_anal_tab = Sinusoidal_Spec_Anal()
+        self.stackedWidget.addWidget(self.sinusoidal_spec_anal_tab)  # Add page to the stacked widget
 
         # Third page
         self.rt_sine_trans_tab = Rt_sine_transformation()
@@ -33,10 +28,6 @@ class MainWindow(QMainWindow):
 
     def go_to_second(self):
         self.stackedWidget.setCurrentIndex(1)
-        self.rt_sine_trans_tab.listening = False
-
-    def go_to_third(self):
-        self.stackedWidget.setCurrentIndex(2)
         self.rt_sine_trans_tab.listening = True
 
 

@@ -31,11 +31,11 @@ overl = es.OverlapAdd(frameSize=2048, hopSize=512)
 awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
-class Dft_model(QWidget):
+class Sinusoidal_Spec_Anal(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        uic.loadUi('dft_model.ui', self)
+        uic.loadUi('sinusoidal_spec_anal.ui', self)
 
         self.browse_button = self.findChild(QPushButton, "browse_btn")
         self.input_text_box = self.findChild(QLineEdit, "filename")
