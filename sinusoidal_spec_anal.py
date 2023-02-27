@@ -47,6 +47,9 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.play_button = self.findChild(QPushButton, "play_btn")
         self.play_button.clicked.connect(lambda: self.play_result())
 
+        self.pause_button = self.findChild(QPushButton, "pause_btn")
+        self.pause_button.clicked.connect(lambda: self.stop_result())
+
         pg.setConfigOptions(antialias=True)
         # self.win = pg.GraphicsLayoutWidget(self)
         # self.win.setGeometry(QRect(20, 160, 681, 141))
@@ -88,7 +91,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.win2.addItem(self.hist, row=1, col=2)
 
         # Custom ROI for selecting an image region
-        self.roi = pg.ROI([-8, 14], [6, 5], pen='r', handlePen='g', handleHoverPen='b')
+        self.roi = pg.ROI([50, 50], [100, 200], pen='r', handlePen='g', handleHoverPen='b')
         self.roi.addScaleHandle([1, 1], [0, 0])
         self.roi.addScaleHandle([0, 0], [1, 1])
         self.roi.addScaleHandle([0, 1], [1, 0])
@@ -168,7 +171,7 @@ class Sinusoidal_Spec_Anal(QWidget):
                            (0.0, (75, 0, 113, 255))]})
 
             self.img.setImage(np.transpose(self.spec))
-            self.spectrogram.setYRange(0, 1000)
+            self.spectrogram.setYRange(0, np.transpose(self.spec)[:, 0].size)
             self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
 
     def movedRegion(self):
@@ -188,6 +191,12 @@ class Sinusoidal_Spec_Anal(QWidget):
         if self.frames_start <= 0:
             self.frames_start = 0
 
+        numFrames = np.transpose(self.spec)[0,:].size
+        
+        if self.frames_end >= numFrames:
+            self.frames_end = numFrames
+
+        print(self.frames_end)
         self.bins_start = int(self.indexes[0][0][0])
         self.bins_end = int(self.indexes[0][-1][0])
 
@@ -198,15 +207,16 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def synthesis(self):
 
-        self.sinusoids2 = np.copy(self.sinusoids)
-        self.magnitudes2 = np.copy(self.magnitudes)
-        self.phases2 = np.copy(self.phases)
+        self.sinusoids2 = np.copy(self.sinusoids[self.frames_start:self.frames_end])
+        self.magnitudes2 = np.copy(self.magnitudes[self.frames_start:self.frames_end])
+        self.phases2 = np.copy(self.phases[self.frames_start:self.frames_end])
 
         self.y = np.array([])
         # Sinusoids synthesis (gives 0 values for non-selected regions of the sinusoids)
-        for f in range(0, len(self.sinusoids2)):  # For every frame
+
+        for f in range(0, self.frames_end-self.frames_start):  # For every frame
             for i in range(0, len(self.sinusoids2[0])):  # For every bin of the frame
-                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end) or (f <= self.frames_start or f >= self.frames_end):
+                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end):
                     self.sinusoids2[f][i] = 0.0
                     self.magnitudes2[f][i] = 0.0
                     self.phases2[f][i] = 0.0
@@ -246,3 +256,6 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def play_result(self):
         sd.play(self.y, fs)
+
+    def stop_result(self):
+        sd.stop()

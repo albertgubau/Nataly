@@ -60,7 +60,7 @@
   <widget class="QPushButton" name="browse_btn">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>430</x>
      <y>110</y>
      <width>89</width>
      <height>21</height>
@@ -73,9 +73,9 @@
   <widget class="QPushButton" name="compute_btn">
    <property name="geometry">
     <rect>
-     <x>540</x>
+     <x>530</x>
      <y>110</y>
-     <width>89</width>
+     <width>81</width>
      <height>21</height>
     </rect>
    </property>
@@ -86,14 +86,27 @@
   <widget class="QPushButton" name="play_btn">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>620</x>
+     <y>110</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Play!</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pause_btn">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
      <y>110</y>
      <width>51</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>Play!</string>
+    <string>Pause</string>
    </property>
   </widget>
  </widget>
