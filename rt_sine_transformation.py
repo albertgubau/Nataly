@@ -198,7 +198,7 @@ class Rt_sine_transformation(QWidget):
         previous_wf_data3 = self.wf_data[1535:2048]
 
         # Get the data from the mic
-        self.wf_data = self.stream.read(self.CHUNK)
+        self.wf_data = self.stream.read(self.CHUNK, exception_on_overflow=False)
 
         # Unpack the data as ints
         self.wf_data = np.array(

@@ -14,20 +14,22 @@ from pyqtgraph.Qt import QtCore, QtGui
 from PyQt5.QtCore import *
 
 fs = 44100
+N = 2048
+H = N // 4
 
 # Instantiate the Essentia Algorithms
-w = es.Windowing(type='hamming', size=2048)
+w = es.Windowing(type='hamming', size=2000)
 spectrum = es.Spectrum()
-fft = es.FFT(size=2048)
+fft = es.FFT(size=N)
 sineAnal = es.SineModelAnal(sampleRate=fs,
                             maxnSines=150,
-                            magnitudeThreshold=-120,
+                            magnitudeThreshold=-80,
                             freqDevOffset=10,
                             freqDevSlope=0.001)
 
-sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=2048, hopSize=512)
-ifft = es.IFFT(size=2048)
-overl = es.OverlapAdd(frameSize=2048, hopSize=512)
+sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
+ifft = es.IFFT(size=N)
+overl = es.OverlapAdd(frameSize=N, hopSize=H)
 awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
@@ -67,21 +69,30 @@ class Sinusoidal_Spec_Anal(QWidget):
         #    title='WAVEFORM', row=1, col=1
         # )
 
+        sp_xaxis = pg.AxisItem(orientation='bottom')
+        sp_xaxis.setScale(scale=H / fs)
+        sp_yaxis = pg.AxisItem(orientation='left')
+        sp_yaxis.setScale(scale=fs / N)
+
         # Add plots to the window
         self.spectrogram = self.win2.addPlot(
-            title='SPECTROGRAM', row=1, col=1
+            title='SPECTROGRAM', row=1, col=1, axisItems={'bottom': sp_xaxis, 'left': sp_yaxis}
         )
+
+        self.spectrogram.setLabel('bottom', "Time (s)")
+        self.spectrogram.setLabel('left', "Frequency (Hz)")
+
         # Add plots to the window
-        self.region = self.win2.addPlot(
-            title='REGION', row=2, col=1
-        )
+        # self.region = self.win2.addPlot(
+        #    title='REGION', row=2, col=1
+        # )
 
         # Item for displaying image data
         self.img = pg.ImageItem()
         self.spectrogram.addItem(self.img)
 
-        self.img2 = pg.ImageItem()
-        self.region.addItem(self.img2)
+        # self.img2 = pg.ImageItem()
+        # self.region.addItem(self.img2)
 
         # Add a histogram with which to control the gradient of the image
         self.hist = pg.HistogramLUTItem()
@@ -131,14 +142,14 @@ class Sinusoidal_Spec_Anal(QWidget):
 
             # self.waveform.clear()
             self.img.clear()
-            self.img2.clear()
+            # self.img2.clear()
             # self.waveform.plot(self.x, pen='g')
 
             self.spec = np.array([])
             self.sinusoids = np.array([])
 
             frames = 0
-            for frame in es.FrameGenerator(audio=self.x, frameSize=2048, hopSize=512):
+            for frame in es.FrameGenerator(audio=self.x, frameSize=N, hopSize=H, startFromZero=True):
 
                 frame_spectrum = spectrum(w(frame))
 
@@ -148,15 +159,15 @@ class Sinusoidal_Spec_Anal(QWidget):
 
                 if frames == 0:  # First frame
                     self.spec = frame_spectrum
-                    self.sinusoids = sine_anal[0]
-                    self.magnitudes = sine_anal[1]
-                    self.phases = sine_anal[2]
+                    self.sinusoids = np.array([sine_anal[0]])
+                    self.magnitudes = np.array([sine_anal[1]])
+                    self.phases = np.array([sine_anal[2]])
 
                 else:  # Next frames
                     self.spec = np.vstack((self.spec, frame_spectrum))
-                    self.sinusoids = np.vstack((self.sinusoids, sine_anal[0]))
-                    self.magnitudes = np.vstack((self.magnitudes, sine_anal[1]))
-                    self.phases = np.vstack((self.phases, sine_anal[1]))
+                    self.sinusoids = np.vstack((self.sinusoids, np.array([sine_anal[0]])))
+                    self.magnitudes = np.vstack((self.magnitudes, np.array([sine_anal[1]])))
+                    self.phases = np.vstack((self.phases, np.array([sine_anal[2]])))
 
                 frames += 1
 
@@ -169,17 +180,22 @@ class Sinusoidal_Spec_Anal(QWidget):
                  'ticks': [(0.5, (0, 182, 188, 255)),
                            (1.0, (246, 111, 0, 255)),
                            (0.0, (75, 0, 113, 255))]})
+            
+            spectrogram = np.transpose(self.spec)
 
-            self.img.setImage(np.transpose(self.spec))
-            self.spectrogram.setYRange(0, np.transpose(self.spec)[:, 0].size)
+            self.img.setImage(spectrogram)
+            # set up the correct scaling for y-axis
+
+            self.spectrogram.setYRange(0, 300)
             self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
+            self.roi.setPos(0, 0)
 
     def movedRegion(self):
 
         self.selected = self.roi.getArrayRegion(self.img.image, self.img)
 
-        self.img2.clear()
-        self.img2.setImage(self.selected)
+        # self.img2.clear()
+        # self.img2.setImage(self.selected)
 
     def SelectedRegion(self):
 
@@ -188,20 +204,33 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.frames_start = int(self.indexes[1][0][0])
         self.frames_end = int(self.indexes[1][-1][-1])
 
+        print(self.frames_start)
+        print(self.frames_end)
+
         if self.frames_start <= 0:
             self.frames_start = 0
 
-        numFrames = np.transpose(self.spec)[0,:].size
-        
+        numFrames = np.transpose(self.spec)[0, :].size
+
         if self.frames_end >= numFrames:
             self.frames_end = numFrames
 
-        print(self.frames_end)
         self.bins_start = int(self.indexes[0][0][0])
         self.bins_end = int(self.indexes[0][-1][0])
 
-        self.frequencies_start = (self.bins_start * fs) / 2048  # Convert it to frequency values
-        self.frequencies_end = (self.bins_end * fs) / 2048  # Convert it to frequency values
+        if self.bins_start <= 0:
+            self.bins_start = 0
+
+        numFreqs = np.transpose(self.spec)[:, 0].size
+
+        if self.bins_end >= numFreqs:
+            self.bins_end = numFreqs
+
+        print(self.bins_start)
+        print(self.bins_end)
+
+        self.frequencies_start = (self.bins_start * fs) / N  # Convert it to frequency values
+        self.frequencies_end = (self.bins_end * fs) / N  # Convert it to frequency values
 
         self.synthesis()
 
@@ -214,12 +243,10 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.y = np.array([])
         # Sinusoids synthesis (gives 0 values for non-selected regions of the sinusoids)
 
-        for f in range(0, self.frames_end-self.frames_start):  # For every frame
+        for f in range(0, self.frames_end - self.frames_start):  # For every frame
             for i in range(0, len(self.sinusoids2[0])):  # For every bin of the frame
-                if (self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end):
+                if self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end:
                     self.sinusoids2[f][i] = 0.0
-                    self.magnitudes2[f][i] = 0.0
-                    self.phases2[f][i] = 0.0
 
             # Synthesis (with OverlapAdd and IFFT)
             fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f], self.phases2[f])
@@ -233,6 +260,8 @@ class Sinusoidal_Spec_Anal(QWidget):
         awrite(self.y)
 
     def plot(self):
+
+        self.spectrogram.setYRange(0, 1025)
         plt.close()
         plt.figure()
         plt.subplot(2, 1, 1)
