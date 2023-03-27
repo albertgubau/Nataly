@@ -41,6 +41,9 @@ class Slider(QWidget):
         self.horizontalLayout.addItem(spacerItem)
         self.slider = QSlider(self)
         self.slider.setOrientation(Qt.Vertical)
+        self.slider.setStyleSheet("QSlider {background-color:white;"
+                                  "width: 15px;"
+                                  "border-radius: 5px;}")
         self.horizontalLayout.addWidget(self.slider)
         spacerItem1 = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
@@ -52,6 +55,7 @@ class Slider(QWidget):
         self.slider.valueChanged.connect(self.setLabelValue)
         self.x = None
         self.setLabelValue(self.slider.value())
+        self.setStyleSheet("color:white;")
 
     def setLabelValue(self, value):
         self.x = self.minimum + (float(value) / (self.slider.maximum() - self.slider.minimum())) * (
@@ -71,6 +75,9 @@ class Rt_sine_transformation(QWidget):
         layout.addWidget(self.slider)
 
         self.listen_checkbox = QCheckBox("Listen?")
+        self.listen_checkbox.setStyleSheet("QCheckBox {color:white;}"
+                                           "QCheckBox::indicator { border: 1px solid; border-color: white; }"
+                                           "QCheckBox::indicator:checked { background-color:blue; }")
         layout.addWidget(self.listen_checkbox)
 
         # Set the Layout on the application window
@@ -79,6 +86,8 @@ class Rt_sine_transformation(QWidget):
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget()
         layout.addWidget(self.win)
+
+        self.win.setBackground('#2e2e2e')
 
         # OLD CODE FROM PREVIOUS APP
         self.traces = dict()
@@ -89,19 +98,19 @@ class Rt_sine_transformation(QWidget):
         self.results = np.array([])
 
         # Waveform x/y axis labels
-        wf_xlabels = [(0, '0'), (2048, '2048'), (4096, '4096')]
+        wf_xlabels = [(0, '0'), (2048, '2048')]
         wf_xaxis = pg.AxisItem(orientation='bottom')
         wf_xaxis.setTicks([wf_xlabels])
         wf_yaxis = pg.AxisItem(orientation='left')
 
         # Windowed Waveform x/y axis labels
-        wf_w_xlabels = [(0, '0'), (2048, '2048'), (4096, '4096')]
+        wf_w_xlabels = [(0, '0'), (2048, '2048')]
         wf_w_xaxis = pg.AxisItem(orientation='bottom')
         wf_w_xaxis.setTicks([wf_w_xlabels])
         wf_w_yaxis = pg.AxisItem(orientation='left')
 
-        # Waveform x/y axis labels
-        out_xlabels = [(0, '0'), (2048, '2048'), (4096, '4096')]
+        # Out Waveform x/y axis labels
+        out_xlabels = [(0, '0'), (2048, '2048')]
         out_xaxis = pg.AxisItem(orientation='bottom')
         out_xaxis.setTicks([out_xlabels])
         out_yaxis = pg.AxisItem(orientation='left')
@@ -116,21 +125,32 @@ class Rt_sine_transformation(QWidget):
 
         # Add plots to the window
         self.waveform = self.win.addPlot(
-            title='WAVEFORM', row=1, col=1, axisItems={'bottom': wf_xaxis, 'left': wf_yaxis},
+            title='WAVEFORM', row=0, col=0, axisItems={'bottom': wf_xaxis, 'left': wf_yaxis},
         )
-
+        self.waveform.hideAxis('left')
+        self.waveform.hideAxis('bottom')
         # Add plots to the window
         self.w_waveform = self.win.addPlot(
-            title='Windowed WAVEFORM', row=2, col=1, axisItems={'bottom': wf_w_xaxis, 'left': wf_w_yaxis},
+            title='Windowed WAVEFORM', row=1, col=0, axisItems={'bottom': wf_w_xaxis, 'left': wf_w_yaxis},
         )
+        self.w_waveform.hideAxis('left')
+        self.w_waveform.hideAxis('bottom')
+
+        self.win.ci.layout.setSpacing(30)
 
         self.spectrum = self.win.addPlot(
-            title='SPECTRUM', row=3, col=1, axisItems={'bottom': sp_xaxis},
+            title='SPECTRUM', row=2, col=0, axisItems={'bottom': sp_xaxis},
         )
 
+        self.spectrum.hideAxis('left')
+
+
         self.out = self.win.addPlot(
-            title='OUT', row=4, col=1, axisItems={'bottom': out_xaxis, 'left': out_yaxis},
+            title='OUT', row=3, col=0, axisItems={'bottom': out_xaxis, 'left': out_yaxis},
         )
+
+        self.out.hideAxis('left')
+        self.out.hideAxis('bottom')
 
         self.iterations = 0
         self.wf_data = np.array([])
@@ -172,24 +192,24 @@ class Rt_sine_transformation(QWidget):
         else:
             if name == 'waveform':
                 self.traces[name] = self.waveform.plot(pen='c', width=3)
-                self.waveform.setYRange(-0.05, 0.05, padding=0)
-                self.waveform.setXRange(0, self.CHUNK, padding=0.005)
+                #self.waveform.setYRange(-0.05, 0.05, padding=0)
+                #self.waveform.setXRange(0, self.CHUNK, padding=0.005)
 
             if name == 'w_waveform':
                 self.traces[name] = self.w_waveform.plot(pen='c', width=3)
-                self.w_waveform.setYRange(-5e-5, 5e-5, padding=0)
-                self.w_waveform.setXRange(0, self.CHUNK, padding=0.005)
+                self.w_waveform.setYRange(-5e-5, 5e-5, padding=0.005)
+                #self.w_waveform.setXRange(0, self.CHUNK, padding=0.005)
 
             if name == 'spectrum':
                 self.traces[name] = self.spectrum.plot(pen='m', width=3)
                 self.spectrum.setLogMode(x=True, y=True)
                 self.spectrum.setYRange(np.log10(0.001), np.log10(20), padding=0)
-                self.spectrum.setXRange(np.log10(20), np.log10(self.RATE / 2), padding=0.005)
+                #self.spectrum.setXRange(np.log10(20), np.log10(self.RATE / 2), padding=0.005)
 
             if name == 'out':
                 self.traces[name] = self.out.plot(pen='c', width=3)
-                self.out.setYRange(-0.02, 0.02, padding=0)
-                self.out.setXRange(0, self.CHUNK // 4, padding=0.005)
+                self.out.setYRange(-0.02, 0.02, padding=0.05)
+                #self.out.setXRange(0, self.CHUNK // 4, padding=0.005)
 
     def update_plots(self):
 

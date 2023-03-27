@@ -33,6 +33,39 @@ overl = es.OverlapAdd(frameSize=N, hopSize=H)
 awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
+class Slider(QWidget):
+    def __init__(self, minimum, maximum, parent=None):
+        super(Slider, self).__init__(parent=parent)
+        self.verticalLayout = QVBoxLayout(self)
+        self.label = QLabel(self)
+        self.verticalLayout.addWidget(self.label)
+        self.horizontalLayout = QHBoxLayout()
+        spacerItem = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.slider = QSlider(self)
+        self.slider.setOrientation(Qt.Horizontal)
+        self.slider.setStyleSheet("QSlider {background-color:white;"
+                                  "width: 15px;"
+                                  "border-radius: 5px;}")
+        self.horizontalLayout.addWidget(self.slider)
+        spacerItem1 = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.resize(self.sizeHint())
+
+        self.minimum = minimum
+        self.maximum = maximum
+        self.slider.valueChanged.connect(self.setLabelValue)
+        self.x = None
+        self.setLabelValue(self.slider.value())
+        self.setStyleSheet("color:white;")
+
+    def setLabelValue(self, value):
+        self.x = self.minimum + (float(value) / (self.slider.maximum() - self.slider.minimum())) * (
+                self.maximum - self.minimum)
+        self.label.setText("{0:.4g}".format(self.x))
+
+
 class Sinusoidal_Spec_Anal(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,7 +92,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.win2 = pg.GraphicsLayoutWidget(self)
         self.win2.setGeometry(QRect(20, 160, 721, 371))
-        self.win2.setBackground('w')
+        self.win2.setBackground('#2e2e2e')
 
         # Interpret image data as row-major instead of col-major
         pg.setConfigOptions(imageAxisOrder='row-major')
@@ -110,7 +143,6 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.spectrogram.addItem(self.roi)
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.sigRegionChangeFinished.connect(lambda: self.SelectedRegion())
-        self.roi.sigRegionChanged.connect(lambda: self.movedRegion())
 
         self.y = None
         self.x = None
@@ -130,6 +162,22 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.magnitudes = None
         self.indexes = None
         self.selected = None
+
+        self.slider = self.findChild(QSlider, "horizontalSlider")
+        self.label = self.findChild(QLabel, "label")
+
+        self.x = 1.0
+
+        self.slider.valueChanged.connect(self.slide_it)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(200)
+        self.slider.setValue(100)
+        self.slider.sliderReleased.connect(lambda:self.synthesis())
+
+    def slide_it(self, value):
+        self.multiplicator = float(value)/100
+        print(self.multiplicator)
+        self.label.setText("{0:.4g}".format(self.multiplicator))
 
     def browse_file(self):
         # Open File Dialog (returns a tuple)
@@ -190,13 +238,6 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
             self.roi.setPos(0, 0)
 
-    def movedRegion(self):
-
-        self.selected = self.roi.getArrayRegion(self.img.image, self.img)
-
-        # self.img2.clear()
-        # self.img2.setImage(self.selected)
-
     def SelectedRegion(self):
 
         self.selected, self.indexes = self.roi.getArrayRegion(self.img.image, self.img, returnMappedCoords=True)
@@ -247,6 +288,8 @@ class Sinusoidal_Spec_Anal(QWidget):
             for i in range(0, len(self.sinusoids2[0])):  # For every bin of the frame
                 if self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end:
                     self.sinusoids2[f][i] = 0.0
+                else:
+                    self.sinusoids2[f][i] *= self.multiplicator
 
             # Synthesis (with OverlapAdd and IFFT)
             fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f], self.phases2[f])
@@ -285,6 +328,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def play_result(self):
         sd.play(self.y, fs)
+
 
     def stop_result(self):
         sd.stop()

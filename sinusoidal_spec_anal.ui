@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>746</width>
-    <height>548</height>
+    <width>745</width>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#2e2e2e;</string>
   </property>
   <widget class="QLabel" name="title_label">
    <property name="geometry">
@@ -30,6 +33,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
+   </property>
    <property name="text">
     <string>Sinusoidal Model Spectrogram Analyzer</string>
    </property>
@@ -43,15 +49,27 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: white;
+border-radius:10px;</string>
+   </property>
   </widget>
   <widget class="QLabel" name="input_label">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>110</y>
-     <width>91</width>
+     <width>71</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
    </property>
    <property name="text">
     <string>Input File:</string>
@@ -66,6 +84,20 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
+   </property>
    <property name="text">
     <string>Browse</string>
    </property>
@@ -78,6 +110,20 @@
      <width>81</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
    </property>
    <property name="text">
     <string>Compute</string>
@@ -92,6 +138,20 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
+   </property>
    <property name="text">
     <string>Play!</string>
    </property>
@@ -105,8 +165,60 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
+   </property>
    <property name="text">
     <string>Pause</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horizontalSlider">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>550</y>
+     <width>511</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>550</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>17</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;
+</string>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
  </widget>
