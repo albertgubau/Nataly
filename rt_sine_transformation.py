@@ -4,10 +4,12 @@ import struct
 import pyaudio
 import sounddevice as sd
 
+
+from PyQt5 import uic
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 
 import time
 import sys
@@ -30,64 +32,32 @@ awrite = es.MonoWriter(filename='output.wav', sampleRate=fs)
 awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
 
 
-class Slider(QWidget):
-    def __init__(self, minimum, maximum, parent=None):
-        super(Slider, self).__init__(parent=parent)
-        self.verticalLayout = QVBoxLayout(self)
-        self.label = QLabel(self)
-        self.verticalLayout.addWidget(self.label)
-        self.horizontalLayout = QHBoxLayout()
-        spacerItem = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        self.slider = QSlider(self)
-        self.slider.setOrientation(Qt.Vertical)
-        self.slider.setStyleSheet("QSlider {background-color:white;"
-                                  "width: 15px;"
-                                  "border-radius: 5px;}")
-        self.horizontalLayout.addWidget(self.slider)
-        spacerItem1 = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.resize(self.sizeHint())
-
-        self.minimum = minimum
-        self.maximum = maximum
-        self.slider.valueChanged.connect(self.setLabelValue)
-        self.x = None
-        self.setLabelValue(self.slider.value())
-        self.setStyleSheet("color:white;")
-
-    def setLabelValue(self, value):
-        self.x = self.minimum + (float(value) / (self.slider.maximum() - self.slider.minimum())) * (
-                self.maximum - self.minimum)
-        self.label.setText("{0:.4g}".format(self.x))
-
-
 class Rt_sine_transformation(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Create a QHBoxLayout instance
-        layout = QHBoxLayout()
-
-        # Add Widgets to the Layout
-        self.slider = Slider(0, 2)
-        layout.addWidget(self.slider)
-
-        self.listen_checkbox = QCheckBox("Listen?")
-        self.listen_checkbox.setStyleSheet("QCheckBox {color:white;}"
-                                           "QCheckBox::indicator { border: 1px solid; border-color: white; }"
-                                           "QCheckBox::indicator:checked { background-color:blue; }")
-        layout.addWidget(self.listen_checkbox)
-
-        # Set the Layout on the application window
-        self.setLayout(layout)
+        uic.loadUi('stft_model.ui', self)
 
         pg.setConfigOptions(antialias=True)
-        self.win = pg.GraphicsLayoutWidget()
-        layout.addWidget(self.win)
-
+        self.win = pg.GraphicsLayoutWidget(self)
+        self.win.setGeometry(QRect(130, 90, 601, 500))
         self.win.setBackground('#2e2e2e')
+
+        self.slider = self.findChild(QSlider, "verticalSlider")
+        self.label = self.findChild(QLabel, "label")
+
+        self.multiplicator = 1.0
+        self.slider.valueChanged.connect(self.slide_it)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(200)
+        self.slider.setValue(100)
+        self.slider.sliderReleased.connect(lambda: self.synthesis())
+
+        self.listen_checkbox = self.findChild(QCheckBox, "listen_checkbox")
+
+        self.reset_button = self.findChild(QPushButton, "reset_btn")
+        self.reset_button.clicked.connect(lambda: self.reset_slider())
+
 
         # OLD CODE FROM PREVIOUS APP
         self.traces = dict()
@@ -184,6 +154,15 @@ class Rt_sine_transformation(QWidget):
         # Half spectrum because of essentia computation
         self.f = np.linspace(0, self.RATE // 2, self.CHUNK // 2 + 1)  # 1025 numbers from 0 to 22050 (frequencies)
 
+
+    def slide_it(self, value):
+        self.multiplicator = float(value) / 100
+        self.label.setText("{0:.4g}".format(self.multiplicator))
+
+    def reset_slider(self):
+        self.slider.setValue(100)
+        self.multiplicator = 1
+
     def set_plotdata(self, name, data_x, data_y):
 
         if name in self.traces:
@@ -192,7 +171,7 @@ class Rt_sine_transformation(QWidget):
         else:
             if name == 'waveform':
                 self.traces[name] = self.waveform.plot(pen='c', width=3)
-                #self.waveform.setYRange(-0.05, 0.05, padding=0)
+                self.waveform.setYRange(-0.05, 0.05, padding=0)
                 #self.waveform.setXRange(0, self.CHUNK, padding=0.005)
 
             if name == 'w_waveform':
@@ -240,7 +219,7 @@ class Rt_sine_transformation(QWidget):
         sine_anal = sineAnal(fft_signal)  # li entra una fft de 1025 samples
 
         # Frequency scaling values
-        ysfreq = sine_anal[0] * self.slider.x  # scale of frequencies
+        ysfreq = sine_anal[0] * self.multiplicator  # scale of frequencies
 
         # Synthesis (with OverlapAdd and IFFT)
         fft_synth = sineSynth(sine_anal[1], ysfreq, sine_anal[2])  # retorna un frame de 1025 samples
@@ -255,7 +234,7 @@ class Rt_sine_transformation(QWidget):
 
             fft1 = fft(w(wf_data1))
             sine_anal1 = sineAnal(fft1)
-            ysfreq1 = sine_anal1[0] * self.slider.x
+            ysfreq1 = sine_anal1[0] * self.multiplicator
             fft_synth1 = sineSynth(sine_anal1[1], ysfreq1, sine_anal1[2])  # retorna un frame de 1025 samples
 
             out1 = overl(ifft(fft_synth1))  # Tenim un frame de 512 samples
@@ -265,7 +244,7 @@ class Rt_sine_transformation(QWidget):
 
             fft2 = fft(w(wf_data2))
             sine_anal2 = sineAnal(fft2)
-            ysfreq2 = sine_anal2[0] * self.slider.x
+            ysfreq2 = sine_anal2[0] * self.multiplicator
             fft_synth2 = sineSynth(sine_anal2[1], ysfreq2, sine_anal2[2])  # retorna un frame de 1025 samples
 
             out2 = overl(ifft(fft_synth2))  # Tenim un frame de 512 samples
@@ -275,7 +254,7 @@ class Rt_sine_transformation(QWidget):
 
             fft3 = fft(w(wf_data3))
             sine_anal3 = sineAnal(fft3)
-            ysfreq3 = sine_anal3[0] * self.slider.x
+            ysfreq3 = sine_anal3[0] * self.multiplicator
             fft_synth3 = sineSynth(sine_anal3[1], ysfreq3, sine_anal3[2])  # retorna un frame de 1025 samples
 
             out3 = overl(ifft(fft_synth3))  # Tenim un frame de 512 samples

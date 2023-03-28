@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>745</width>
-    <height>589</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,6 +41,9 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="filename">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>100</x>
@@ -55,8 +58,17 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: white;
-border-radius:10px;</string>
+    <string notr="true">QLineEdit{
+	background-color: white;
+	border-radius:10px;
+}
+QLineEdit:disabled{
+	color:black;
+}
+</string>
+   </property>
+   <property name="placeholderText">
+    <string>Path to your input file</string>
    </property>
   </widget>
   <widget class="QLabel" name="input_label">
@@ -186,11 +198,25 @@ QPushButton:hover {
   <widget class="QSlider" name="horizontalSlider">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>90</x>
      <y>550</y>
      <width>511</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QSlider {
+            background-color: #FF3B3B3B;
+            color: white;
+            border : 0.1em;
+            height:  1.5em;
+border-radius:7px;
+        }
+
+QSlider:hover {
+       background-color:rgb(94, 92, 100);
+       
+}        </string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -199,8 +225,8 @@ QPushButton:hover {
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>550</y>
+     <x>10</x>
+     <y>549</y>
      <width>71</width>
      <height>21</height>
     </rect>
@@ -219,6 +245,33 @@ QPushButton:hover {
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="reset_btn">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>550</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
+   </property>
+   <property name="text">
+    <string>R</string>
    </property>
   </widget>
  </widget>

@@ -33,39 +33,6 @@ overl = es.OverlapAdd(frameSize=N, hopSize=H)
 awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
-class Slider(QWidget):
-    def __init__(self, minimum, maximum, parent=None):
-        super(Slider, self).__init__(parent=parent)
-        self.verticalLayout = QVBoxLayout(self)
-        self.label = QLabel(self)
-        self.verticalLayout.addWidget(self.label)
-        self.horizontalLayout = QHBoxLayout()
-        spacerItem = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem)
-        self.slider = QSlider(self)
-        self.slider.setOrientation(Qt.Horizontal)
-        self.slider.setStyleSheet("QSlider {background-color:white;"
-                                  "width: 15px;"
-                                  "border-radius: 5px;}")
-        self.horizontalLayout.addWidget(self.slider)
-        spacerItem1 = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.resize(self.sizeHint())
-
-        self.minimum = minimum
-        self.maximum = maximum
-        self.slider.valueChanged.connect(self.setLabelValue)
-        self.x = None
-        self.setLabelValue(self.slider.value())
-        self.setStyleSheet("color:white;")
-
-    def setLabelValue(self, value):
-        self.x = self.minimum + (float(value) / (self.slider.maximum() - self.slider.minimum())) * (
-                self.maximum - self.minimum)
-        self.label.setText("{0:.4g}".format(self.x))
-
-
 class Sinusoidal_Spec_Anal(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -84,6 +51,9 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.pause_button = self.findChild(QPushButton, "pause_btn")
         self.pause_button.clicked.connect(lambda: self.stop_result())
+
+        self.reset_button = self.findChild(QPushButton, "reset_btn")
+        self.reset_button.clicked.connect(lambda: self.reset_slider())
 
         pg.setConfigOptions(antialias=True)
         # self.win = pg.GraphicsLayoutWidget(self)
@@ -166,7 +136,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.slider = self.findChild(QSlider, "horizontalSlider")
         self.label = self.findChild(QLabel, "label")
 
-        self.x = 1.0
+        self.multiplicator = 1.0
 
         self.slider.valueChanged.connect(self.slide_it)
         self.slider.setMinimum(0)
@@ -176,7 +146,6 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def slide_it(self, value):
         self.multiplicator = float(value)/100
-        print(self.multiplicator)
         self.label.setText("{0:.4g}".format(self.multiplicator))
 
     def browse_file(self):
@@ -288,11 +257,9 @@ class Sinusoidal_Spec_Anal(QWidget):
             for i in range(0, len(self.sinusoids2[0])):  # For every bin of the frame
                 if self.sinusoids2[f][i] <= self.frequencies_start or self.sinusoids2[f][i] >= self.frequencies_end:
                     self.sinusoids2[f][i] = 0.0
-                else:
-                    self.sinusoids2[f][i] *= self.multiplicator
 
             # Synthesis (with OverlapAdd and IFFT)
-            fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f], self.phases2[f])
+            fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f]*self.multiplicator, self.phases2[f])
 
             out = overl(ifft(fft_synth))
 
@@ -332,3 +299,8 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def stop_result(self):
         sd.stop()
+
+    def reset_slider(self):
+        self.slider.setValue(100)
+        self.multiplicator = 1
+        self.synthesis()
