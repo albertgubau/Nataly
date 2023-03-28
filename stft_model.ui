@@ -168,7 +168,8 @@ QPushButton:hover {
 
 
 QPushButton:hover {
-	background-color: #3063A5;
+	
+	background-color: rgb(192, 28, 40);
 
 };</string>
    </property>
@@ -186,8 +187,7 @@ QPushButton:hover {
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
