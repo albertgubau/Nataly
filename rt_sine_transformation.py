@@ -28,7 +28,7 @@ sineAnal = es.SineModelAnal(sampleRate=fs,
 sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=2048, hopSize=512)
 ifft = es.IFFT(size=2048)
 overl = es.OverlapAdd(frameSize=2048, hopSize=512)
-awrite = es.MonoWriter(filename='output.wav', sampleRate=fs)
+awrite = es.MonoWriter(sampleRate=fs)
 awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
 
 
@@ -40,8 +40,11 @@ class Rt_sine_transformation(QWidget):
 
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget(self)
-        self.win.setGeometry(QRect(130, 90, 601, 500))
+        self.win.setGeometry(QRect(120, 80, 601, 500))
         self.win.setBackground('#2e2e2e')
+
+        self.record_button = self.findChild(QPushButton, "record_btn")
+        self.record_button.clicked.connect(lambda: self.record())
 
         self.slider = self.findChild(QSlider, "verticalSlider")
         self.label = self.findChild(QLabel, "label")
@@ -51,9 +54,12 @@ class Rt_sine_transformation(QWidget):
         self.slider.setMinimum(0)
         self.slider.setMaximum(200)
         self.slider.setValue(100)
-        self.slider.sliderReleased.connect(lambda: self.synthesis())
 
         self.listen_checkbox = self.findChild(QCheckBox, "listen_checkbox")
+
+        self.recording = False
+
+        self.red_border = self.findChild(QLabel, "label_3")
 
         self.reset_button = self.findChild(QPushButton, "reset_btn")
         self.reset_button.clicked.connect(lambda: self.reset_slider())
@@ -154,6 +160,20 @@ class Rt_sine_transformation(QWidget):
         # Half spectrum because of essentia computation
         self.f = np.linspace(0, self.RATE // 2, self.CHUNK // 2 + 1)  # 1025 numbers from 0 to 22050 (frequencies)
 
+        self.counter = 0
+        self.recordings = 0
+    def record(self):
+
+        self.counter += 1
+        self.recording = not self.recording
+
+        if(self.recording):
+            self.red_border.setStyleSheet("border: 3px solid red;")
+
+        if(self.counter%2 == 0):
+            self.recordings+=1
+            self.red_border.setStyleSheet("border:none;")
+            self.saveResult()
 
     def slide_it(self, value):
         self.multiplicator = float(value) / 100
@@ -269,15 +289,17 @@ class Rt_sine_transformation(QWidget):
         # Save result and play it simultaneously
         self.result = np.append(self.result, out)
 
+        if self.recording:
+            self.result2 = self.result
+
         # We cut the signal to not lag the program with large arrays
-        if len(self.result) >= 4097:
+        if len(self.result) >= 4097 and not self.recording:
             self.result = self.result[len(self.result) - 4096:]
 
         # If we are in the Real-Time Sine Transformations window and the listening checkbox is checked
         # we play the sound
         if self.listening and self.listen_checkbox.isChecked():
-            sd.play(self.result[len(self.result) - 4096:], fs)
-
+            sd.play(np.array(self.result[len(self.result) - 4096:]), fs)
         self.iterations = 1
 
     def animation(self):
@@ -287,6 +309,8 @@ class Rt_sine_transformation(QWidget):
         QApplication.instance().exec_()
 
     def saveResult(self):
+        awrite = es.MonoWriter(filename='output_'+str(self.recordings)+'.wav',sampleRate=fs)
+        awrite(self.result2)
 
-        awrite(self.result)
-        # awrite2(self.prova)
+    def terminate(self):
+        QApplication.instance().quit()

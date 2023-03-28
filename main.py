@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
@@ -36,5 +38,6 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
     window.rt_sine_trans_tab.animation()
-    window.rt_sine_trans_tab.saveResult()
     app.exec_()
+    #window.rt_sine_trans_tab.stream.close()
+
