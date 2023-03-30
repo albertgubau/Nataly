@@ -34,7 +34,7 @@ class Rt_sine_transformation(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        uic.loadUi('stft_model.ui', self)
+        uic.loadUi('rt_sine_transformation.ui', self)
 
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget(self)
