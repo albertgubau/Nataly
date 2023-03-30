@@ -4,12 +4,11 @@ import struct
 import pyaudio
 import sounddevice as sd
 
-
 from PyQt5 import uic
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QCheckBox
+from PyQt5.QtCore import QRect
 
 fs = 44100
 

@@ -1,6 +1,6 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog
+from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
 import numpy as np

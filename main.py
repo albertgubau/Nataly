@@ -1,11 +1,7 @@
-import os
-import sys
-
 from PyQt5 import uic
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from sinusoidal_spec_anal import Sinusoidal_Spec_Anal
-from stft_model import Stft_model
 from rt_sine_transformation import Rt_sine_transformation
 
 
