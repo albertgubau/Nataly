@@ -7,14 +7,12 @@ import sounddevice as sd
 
 from PyQt5 import uic
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.Qt import QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-import time
-import sys
-
 fs = 44100
+
 
 # Instantiate the Essentia Algorithms
 w = es.Windowing(type='hamming', size=2048)
@@ -303,14 +301,10 @@ class Rt_sine_transformation(QWidget):
         self.iterations = 1
 
     def animation(self):
-        timer = QtCore.QTimer()
-        timer.timeout.connect(self.update_plots)
-        timer.start(20)
-        QApplication.instance().exec_()
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update_plots)
+        self.timer.start(0)
 
     def saveResult(self):
         awrite = es.MonoWriter(filename='output_'+str(self.recordings)+'.wav',sampleRate=fs)
         awrite(self.result2)
-
-    def terminate(self):
-        QApplication.instance().quit()

@@ -1,21 +1,20 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+import pyqtgraph as pg
 
 import numpy as np
-from scipy import signal
 import matplotlib.pyplot as plt
 import essentia.standard as es
-import struct
-import pyaudio
 import sounddevice as sd
 
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
-from PyQt5.QtCore import *
 
 fs = 44100
 N = 2048
 H = N // 4
+
+es.warningLevelActive = False
+es.infoLevelActive = False
 
 # Instantiate the Essentia Algorithms
 w = es.Windowing(type='hamming', size=2000)
@@ -150,7 +149,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def browse_file(self):
         # Open File Dialog (returns a tuple)
-        fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)")
+        fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)",options=QFileDialog.DontUseNativeDialog)
 
         # Output filename to screen
         if fname:
@@ -295,7 +294,6 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def play_result(self):
         sd.play(self.y, fs)
-
 
     def stop_result(self):
         sd.stop()
