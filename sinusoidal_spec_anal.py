@@ -1,10 +1,10 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog, QMessageBox
 from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import essentia.standard as es
 import sounddevice as sd
 
@@ -29,7 +29,6 @@ sineAnal = es.SineModelAnal(sampleRate=fs,
 sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
 ifft = es.IFFT(size=N)
 overl = es.OverlapAdd(frameSize=N, hopSize=H)
-awrite = es.MonoWriter(filename='output_synthesis.wav', sampleRate=fs)
 
 
 class Sinusoidal_Spec_Anal(QWidget):
@@ -42,8 +41,8 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.input_text_box = self.findChild(QLineEdit, "filename")
         self.browse_button.clicked.connect(lambda: self.browse_file())
 
-        self.compute_button = self.findChild(QPushButton, "compute_btn")
-        self.compute_button.clicked.connect(lambda: self.plot())
+        #self.compute_button = self.findChild(QPushButton, "compute_btn")
+        #self.compute_button.clicked.connect(lambda: self.plot())
 
         self.play_button = self.findChild(QPushButton, "play_btn")
         self.play_button.clicked.connect(lambda: self.play_result())
@@ -51,25 +50,20 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.pause_button = self.findChild(QPushButton, "pause_btn")
         self.pause_button.clicked.connect(lambda: self.stop_result())
 
+        self.pause_button = self.findChild(QPushButton, "save_btn")
+        self.pause_button.clicked.connect(lambda: self.save_result())
+
         self.reset_button = self.findChild(QPushButton, "reset_btn")
         self.reset_button.clicked.connect(lambda: self.reset_slider())
 
         pg.setConfigOptions(antialias=True)
-        # self.win = pg.GraphicsLayoutWidget(self)
-        # self.win.setGeometry(QRect(20, 160, 681, 141))
-        # self.win.setBackground('w')
 
-        self.win2 = pg.GraphicsLayoutWidget(self)
-        self.win2.setGeometry(QRect(20, 160, 721, 371))
-        self.win2.setBackground('#2e2e2e')
+        self.win = pg.GraphicsLayoutWidget(self)
+        self.win.setGeometry(QRect(20, 160, 721, 371))
+        self.win.setBackground('#2e2e2e')
 
         # Interpret image data as row-major instead of col-major
         pg.setConfigOptions(imageAxisOrder='row-major')
-
-        # Add plots to the window
-        # self.waveform = self.win.addPlot(
-        #    title='WAVEFORM', row=1, col=1
-        # )
 
         sp_xaxis = pg.AxisItem(orientation='bottom')
         sp_xaxis.setScale(scale=H / fs)
@@ -77,31 +71,23 @@ class Sinusoidal_Spec_Anal(QWidget):
         sp_yaxis.setScale(scale=fs / N)
 
         # Add plots to the window
-        self.spectrogram = self.win2.addPlot(
+        self.spectrogram = self.win.addPlot(
             title='SPECTROGRAM', row=1, col=1, axisItems={'bottom': sp_xaxis, 'left': sp_yaxis}
         )
 
         self.spectrogram.setLabel('bottom', "Time (s)")
         self.spectrogram.setLabel('left', "Frequency (Hz)")
 
-        # Add plots to the window
-        # self.region = self.win2.addPlot(
-        #    title='REGION', row=2, col=1
-        # )
-
         # Item for displaying image data
         self.img = pg.ImageItem()
         self.spectrogram.addItem(self.img)
-
-        # self.img2 = pg.ImageItem()
-        # self.region.addItem(self.img2)
 
         # Add a histogram with which to control the gradient of the image
         self.hist = pg.HistogramLUTItem()
         # Link the histogram to the image
         self.hist.setImageItem(self.img)
         # If you don't add the histogram to the window, it stays invisible, but I find it useful.
-        self.win2.addItem(self.hist, row=1, col=2)
+        self.win.addItem(self.hist, row=1, col=2)
 
         # Custom ROI for selecting an image region
         self.roi = pg.ROI([50, 50], [100, 200], pen='r', handlePen='g', handleHoverPen='b')
@@ -132,13 +118,15 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.indexes = None
         self.selected = None
 
+        self.savings = 0
+
         self.slider = self.findChild(QSlider, "horizontalSlider")
         self.label = self.findChild(QLabel, "label")
 
         self.multiplicator = 1.0
 
         self.slider.valueChanged.connect(self.slide_it)
-        self.slider.setMinimum(0)
+        self.slider.setMinimum(50)
         self.slider.setMaximum(200)
         self.slider.setValue(100)
         self.slider.sliderReleased.connect(lambda:self.synthesis())
@@ -265,38 +253,46 @@ class Sinusoidal_Spec_Anal(QWidget):
             # Save result
             self.y = np.append(self.y, out)
 
-        # Write the output file to the specified location
-        awrite(self.y)
-
-    def plot(self):
-
-        self.spectrogram.setYRange(0, 1025)
-        plt.close()
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        # Plotting with Matplotlib in comparison
-        plt.pcolormesh(np.transpose(self.spec))
-        plt.xlabel("Frames")
-        plt.ylabel("Bins")
-        plt.colorbar()
-
-        # This plot is not correct I think, maybe for the result of applying the essentia function
-        plt.subplot(2, 1, 2)
-        if self.sinusoids2.shape[1] > 0:
-            self.sinusoids2[self.sinusoids2 <= 0] = np.nan
-            plt.plot(self.sinusoids2)
-            plt.axis([0, 187, 0, 22000])
-            plt.xlabel("Frames")
-            plt.ylabel("Frequencies")
-            plt.title('frequencies of sinusoidal tracks')
-
-        plt.show()
+    #def plot(self):
+    #
+    #    self.spectrogram.setYRange(0, 1025)
+    #    plt.close()
+    #    plt.figure()
+    #    plt.subplot(2, 1, 1)
+    #    # Plotting with Matplotlib in comparison
+    #    plt.pcolormesh(np.transpose(self.spec))
+    #    plt.xlabel("Frames")
+    #    plt.ylabel("Bins")
+    #    plt.colorbar()
+    #
+    #    # This plot is not correct I think, maybe for the result of applying the essentia function
+    #    plt.subplot(2, 1, 2)
+    #    if self.sinusoids2.shape[1] > 0:
+    #        self.sinusoids2[self.sinusoids2 <= 0] = np.nan
+    #        plt.plot(self.sinusoids2)
+    #        plt.axis([0, 187, 0, 22000])
+    #        plt.xlabel("Frames")
+    #        plt.ylabel("Frequencies")
+    #        plt.title('frequencies of sinusoidal tracks')
+    #
+    #    plt.show()
 
     def play_result(self):
         sd.play(self.y, fs)
 
     def stop_result(self):
         sd.stop()
+
+    def save_result(self):
+        filename = 'output_synthesis_' + str(self.savings) + '.wav'
+        awrite = es.MonoWriter(filename=filename, sampleRate=fs)
+        awrite(self.y)
+        self.savings += 1
+        dialog = QMessageBox(self)
+        dialog.setText('File saved as '+filename)
+        dialog.setWindowTitle('File saved!')
+        dialog.setStyleSheet('color:white;')
+        dialog.exec_()
 
     def reset_slider(self):
         self.slider.setValue(100)

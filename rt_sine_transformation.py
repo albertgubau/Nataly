@@ -25,8 +25,6 @@ sineAnal = es.SineModelAnal(sampleRate=fs,
 sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=2048, hopSize=512)
 ifft = es.IFFT(size=2048)
 overl = es.OverlapAdd(frameSize=2048, hopSize=512)
-awrite = es.MonoWriter(sampleRate=fs)
-awrite2 = es.MonoWriter(filename='prova.wav', sampleRate=fs)
 
 
 class Rt_sine_transformation(QWidget):
@@ -48,7 +46,7 @@ class Rt_sine_transformation(QWidget):
 
         self.multiplicator = 1.0
         self.slider.valueChanged.connect(self.slide_it)
-        self.slider.setMinimum(0)
+        self.slider.setMinimum(50)
         self.slider.setMaximum(200)
         self.slider.setValue(100)
 
@@ -305,5 +303,5 @@ class Rt_sine_transformation(QWidget):
         self.timer.start(0)
 
     def saveResult(self):
-        awrite = es.MonoWriter(filename='output_'+str(self.recordings)+'.wav',sampleRate=fs)
+        awrite = es.MonoWriter(filename='output_rt_sinusoidal_'+str(self.recordings)+'.wav', sampleRate=fs)
         awrite(self.result2)
