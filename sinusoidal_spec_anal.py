@@ -45,15 +45,19 @@ class Sinusoidal_Spec_Anal(QWidget):
         #self.compute_button.clicked.connect(lambda: self.plot())
 
         self.play_button = self.findChild(QPushButton, "play_btn")
+        self.play_button.setEnabled(False)
         self.play_button.clicked.connect(lambda: self.play_result())
 
         self.pause_button = self.findChild(QPushButton, "pause_btn")
+        self.pause_button.setEnabled(False)
         self.pause_button.clicked.connect(lambda: self.stop_result())
 
-        self.pause_button = self.findChild(QPushButton, "save_btn")
-        self.pause_button.clicked.connect(lambda: self.save_result())
+        self.save_button = self.findChild(QPushButton, "save_btn")
+        self.save_button.setEnabled(False)
+        self.save_button.clicked.connect(lambda: self.save_result())
 
         self.reset_button = self.findChild(QPushButton, "reset_btn")
+        self.reset_button.setEnabled(False)
         self.reset_button.clicked.connect(lambda: self.reset_slider())
 
         pg.setConfigOptions(antialias=True)
@@ -99,6 +103,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.sigRegionChangeFinished.connect(lambda: self.SelectedRegion())
 
+
         self.y = None
         self.x = None
         self.spec = None
@@ -121,6 +126,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.savings = 0
 
         self.slider = self.findChild(QSlider, "horizontalSlider")
+        self.slider.setEnabled(False)
         self.label = self.findChild(QLabel, "label")
 
         self.multiplicator = 1.0
@@ -136,13 +142,32 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.label.setText("{0:.4g}".format(self.multiplicator))
 
     def browse_file(self):
+
         # Open File Dialog (returns a tuple)
         fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)",options=QFileDialog.DontUseNativeDialog)
 
         # Output filename to screen
         if fname:
+
+            try:
+                self.x = es.MonoLoader(filename=str(fname[0]))()
+
+            except RuntimeError as e:
+                dialog = QMessageBox(self)
+                dialog.setText('Yo have not loaded any file or the file you have loaded is not an audio file, '
+                               'please load an audio file to analyze its spectrogram.')
+                dialog.setWindowTitle('No file loaded!')
+                dialog.setStyleSheet('color:white;')
+                dialog.exec_()
+                return None
+
             self.input_text_box.setText(str(fname[0]))  # We should modifiy the input text box
-            self.x = es.MonoLoader(filename=self.input_text_box.text())()
+
+            self.play_button.setEnabled(True)
+            self.pause_button.setEnabled(True)
+            self.save_button.setEnabled(True)
+            self.slider.setEnabled(True)
+            self.reset_button.setEnabled(True)
 
             # self.waveform.clear()
             self.img.clear()

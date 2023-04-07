@@ -22,7 +22,7 @@
      <x>20</x>
      <y>10</y>
      <width>661</width>
-     <height>91</height>
+     <height>71</height>
     </rect>
    </property>
    <property name="font">
@@ -131,11 +131,17 @@ QPushButton:hover {
 
 }
 
+QPushButton:!enabled{
+	background-color: rgb(119, 118, 123);
+color: rgb(154, 153, 150);
+}
 
 QPushButton:hover {
 	background-color: #3063A5;
 
-};</string>
+};
+
+</string>
    </property>
    <property name="text">
     <string>Play!</string>
@@ -158,6 +164,10 @@ QPushButton:hover {
 
 }
 
+QPushButton:!enabled{
+	background-color: rgb(119, 118, 123);
+color: rgb(154, 153, 150);
+}
 
 QPushButton:hover {
 	background-color: #3063A5;
@@ -237,6 +247,10 @@ QSlider:hover {
 
 }
 
+QPushButton:!enabled{
+	background-color: rgb(119, 118, 123);
+color: rgb(154, 153, 150);
+}
 
 QPushButton:hover {
 	background-color: #3063A5;
@@ -264,6 +278,10 @@ QPushButton:hover {
 
 }
 
+QPushButton:!enabled{
+	background-color: rgb(119, 118, 123);
+color: rgb(154, 153, 150);
+}
 
 QPushButton:hover {
 	background-color: rgb(20, 149, 26);
