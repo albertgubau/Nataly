@@ -1,34 +1,16 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog, QMessageBox, QComboBox
 from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
 import numpy as np
-#import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import essentia.standard as es
 import sounddevice as sd
-
 
 fs = 44100
 N = 2048
 H = N // 4
-
-es.warningLevelActive = False
-es.infoLevelActive = False
-
-# Instantiate the Essentia Algorithms
-w = es.Windowing(type='hamming', size=2000)
-spectrum = es.Spectrum()
-fft = es.FFT(size=N)
-sineAnal = es.SineModelAnal(sampleRate=fs,
-                            maxnSines=150,
-                            magnitudeThreshold=-80,
-                            freqDevOffset=10,
-                            freqDevSlope=0.001)
-
-sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
-ifft = es.IFFT(size=N)
-overl = es.OverlapAdd(frameSize=N, hopSize=H)
 
 
 class Sinusoidal_Spec_Anal(QWidget):
@@ -37,12 +19,28 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         uic.loadUi('sinusoidal_spec_anal.ui', self)
 
+        self.fft_size_inpt = self.findChild(QLineEdit, "fft_size_inpt")
+        self.fft_size_inpt.setEnabled(False)
+        self.fft_size_inpt.setText('2048')
+        self.window_size_inpt = self.findChild(QLineEdit, "window_size_inpt")
+        self.window_size_inpt.setEnabled(False)
+        self.window_size_inpt.setText('2000')
+
+        self.recompute_btn = self.findChild(QPushButton, "recompute_btn")
+        self.recompute_btn.setEnabled(False)
+        self.recompute_btn.clicked.connect(lambda: self.change_parameters())
+
         self.browse_button = self.findChild(QPushButton, "browse_btn")
         self.input_text_box = self.findChild(QLineEdit, "filename")
         self.browse_button.clicked.connect(lambda: self.browse_file())
 
-        #self.compute_button = self.findChild(QPushButton, "compute_btn")
-        #self.compute_button.clicked.connect(lambda: self.plot())
+        self.combo = self.findChild(QComboBox, "comboBox")
+        self.combo.addItem('hamming')
+        self.combo.addItem('hann')
+        self.combo.setEnabled(False)
+
+        # self.compute_button = self.findChild(QPushButton, "compute_btn")
+        # self.compute_button.clicked.connect(lambda: self.plot())
 
         self.play_button = self.findChild(QPushButton, "play_btn")
         self.play_button.setEnabled(False)
@@ -60,6 +58,24 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.reset_button.setEnabled(False)
         self.reset_button.clicked.connect(lambda: self.reset_slider())
 
+        self.N = int(self.fft_size_inpt.text())
+        self.H = N // 4
+        self.M = int(self.window_size_inpt.text())
+
+        # Instantiate the Essentia Algorithms
+        self.w = es.Windowing(type=self.combo.currentText(), size=self.M - 1)
+        self.spectrum = es.Spectrum()
+        self.fft = es.FFT(size=self.N)
+        self.sineAnal = es.SineModelAnal(sampleRate=fs,
+                                         maxnSines=150,
+                                         magnitudeThreshold=-80,
+                                         freqDevOffset=10,
+                                         freqDevSlope=0.001)
+
+        self.sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=self.N, hopSize=self.H)
+        self.ifft = es.IFFT(size=self.N)
+        self.overl = es.OverlapAdd(frameSize=self.N, hopSize=self.H)
+
         pg.setConfigOptions(antialias=True)
 
         self.win = pg.GraphicsLayoutWidget(self)
@@ -70,9 +86,9 @@ class Sinusoidal_Spec_Anal(QWidget):
         pg.setConfigOptions(imageAxisOrder='row-major')
 
         sp_xaxis = pg.AxisItem(orientation='bottom')
-        sp_xaxis.setScale(scale=H / fs)
+        sp_xaxis.setScale(scale=self.H / fs)
         sp_yaxis = pg.AxisItem(orientation='left')
-        sp_yaxis.setScale(scale=fs / N)
+        sp_yaxis.setScale(scale=fs / self.N)
 
         # Add plots to the window
         self.spectrogram = self.win.addPlot(
@@ -102,7 +118,6 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.spectrogram.addItem(self.roi)
         self.roi.setZValue(10)  # make sure ROI is drawn above image
         self.roi.sigRegionChangeFinished.connect(lambda: self.SelectedRegion())
-
 
         self.y = None
         self.x = None
@@ -135,23 +150,22 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.slider.setMinimum(50)
         self.slider.setMaximum(200)
         self.slider.setValue(100)
-        self.slider.sliderReleased.connect(lambda:self.synthesis())
+        self.slider.sliderReleased.connect(lambda: self.synthesis())
 
     def slide_it(self, value):
-        self.multiplicator = float(value)/100
+        self.multiplicator = float(value) / 100
         self.label.setText("{0:.4g}".format(self.multiplicator))
 
     def browse_file(self):
 
         # Open File Dialog (returns a tuple)
-        fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)",options=QFileDialog.DontUseNativeDialog)
+        fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)",
+                                            options=QFileDialog.DontUseNativeDialog)
 
         # Output filename to screen
         if fname:
-
             try:
                 self.x = es.MonoLoader(filename=str(fname[0]))()
-
             except RuntimeError as e:
                 dialog = QMessageBox(self)
                 dialog.setText('Yo have not loaded any file or the file you have loaded is not an audio file, '
@@ -168,56 +182,90 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.save_button.setEnabled(True)
             self.slider.setEnabled(True)
             self.reset_button.setEnabled(True)
+            self.fft_size_inpt.setEnabled(True)
+            self.window_size_inpt.setEnabled(True)
+            self.recompute_btn.setEnabled(True)
+            self.combo.setEnabled(True)
 
-            # self.waveform.clear()
             self.img.clear()
-            # self.img2.clear()
-            # self.waveform.plot(self.x, pen='g')
 
             self.spec = np.array([])
             self.sinusoids = np.array([])
 
-            frames = 0
-            for frame in es.FrameGenerator(audio=self.x, frameSize=N, hopSize=H, startFromZero=True):
+            self.compute()
 
-                frame_spectrum = spectrum(w(frame))
+    def change_parameters(self):
 
-                infft = fft(w(frame))
+        self.N = int(self.fft_size_inpt.text())
+        self.H = N // 4
+        self.M = int(self.window_size_inpt.text())
 
-                sine_anal = sineAnal(infft)
+        # Instantiate the Essentia Algorithms
+        self.w = es.Windowing(type=self.combo.currentText(), size=self.M - 1)
+        self.spectrum = es.Spectrum()
+        self.fft = es.FFT(size=N)
+        self.sineAnal = es.SineModelAnal(sampleRate=fs,
+                                         maxnSines=150,
+                                         magnitudeThreshold=-80,
+                                         freqDevOffset=10,
+                                         freqDevSlope=0.001)
 
-                if frames == 0:  # First frame
-                    self.spec = frame_spectrum
-                    self.sinusoids = np.array([sine_anal[0]])
-                    self.magnitudes = np.array([sine_anal[1]])
-                    self.phases = np.array([sine_anal[2]])
+        self.sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
+        self.ifft = es.IFFT(size=N)
+        self.overl = es.OverlapAdd(frameSize=N, hopSize=H)
 
-                else:  # Next frames
-                    self.spec = np.vstack((self.spec, frame_spectrum))
-                    self.sinusoids = np.vstack((self.sinusoids, np.array([sine_anal[0]])))
-                    self.magnitudes = np.vstack((self.magnitudes, np.array([sine_anal[1]])))
-                    self.phases = np.vstack((self.phases, np.array([sine_anal[2]])))
+        sp_xaxis = pg.AxisItem(orientation='bottom')
+        sp_xaxis.setScale(scale=self.H / fs)
+        sp_yaxis = pg.AxisItem(orientation='left')
+        sp_yaxis.setScale(scale=fs / self.N)
 
-                frames += 1
+        self.spectrogram.setAxisItems(axisItems={'bottom': sp_xaxis, 'left': sp_yaxis})
 
-            # Fit the min and max levels of the histogram to the data available
-            self.hist.setLevels(np.min(self.spec), np.max(self.spec))
-            # This gradient is roughly comparable to the gradient used by Matplotlib
-            # You can adjust it and then save it using hist.gradient.saveState()
-            self.hist.gradient.restoreState(
-                {'mode': 'rgb',
-                 'ticks': [(0.5, (0, 182, 188, 255)),
-                           (1.0, (246, 111, 0, 255)),
-                           (0.0, (75, 0, 113, 255))]})
-            
-            spectrogram = np.transpose(self.spec)
+        self.compute()
 
-            self.img.setImage(spectrogram)
-            # set up the correct scaling for y-axis
+    def compute(self):
 
-            self.spectrogram.setYRange(0, 300)
-            self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
-            self.roi.setPos(0, 0)
+        frames = 0
+        for frame in es.FrameGenerator(audio=self.x, frameSize=self.N, hopSize=self.H, startFromZero=True):
+
+            frame_spectrum = self.spectrum(self.w(frame))
+
+            infft = self.fft(self.w(frame))
+
+            sine_anal = self.sineAnal(infft)
+
+            if frames == 0:  # First frame
+                self.spec = frame_spectrum
+                self.sinusoids = np.array([sine_anal[0]])
+                self.magnitudes = np.array([sine_anal[1]])
+                self.phases = np.array([sine_anal[2]])
+
+            else:  # Next frames
+                self.spec = np.vstack((self.spec, frame_spectrum))
+                self.sinusoids = np.vstack((self.sinusoids, np.array([sine_anal[0]])))
+                self.magnitudes = np.vstack((self.magnitudes, np.array([sine_anal[1]])))
+                self.phases = np.vstack((self.phases, np.array([sine_anal[2]])))
+
+            frames += 1
+
+        # Fit the min and max levels of the histogram to the data available
+        self.hist.setLevels(np.min(self.spec), np.max(self.spec))
+        # This gradient is roughly comparable to the gradient used by Matplotlib
+        # You can adjust it and then save it using hist.gradient.saveState()
+        self.hist.gradient.restoreState(
+            {'mode': 'rgb',
+             'ticks': [(0.5, (0, 182, 188, 255)),
+                       (1.0, (246, 111, 0, 255)),
+                       (0.0, (75, 0, 113, 255))]})
+
+        spectrogram = np.transpose(self.spec)
+
+        self.img.setImage(spectrogram)
+        # set up the correct scaling for y-axis
+
+        self.spectrogram.setYRange(0, 300)
+        self.spectrogram.setXRange(0, np.transpose(self.spec)[0, :].size)
+        self.roi.setPos(0, 0)
 
     def SelectedRegion(self):
 
@@ -271,14 +319,14 @@ class Sinusoidal_Spec_Anal(QWidget):
                     self.sinusoids2[f][i] = 0.0
 
             # Synthesis (with OverlapAdd and IFFT)
-            fft_synth = sineSynth(self.magnitudes2[f], self.sinusoids2[f]*self.multiplicator, self.phases2[f])
+            fft_synth = self.sineSynth(self.magnitudes2[f], self.sinusoids2[f] * self.multiplicator, self.phases2[f])
 
-            out = overl(ifft(fft_synth))
+            out = self.overl(self.ifft(fft_synth))
 
             # Save result
             self.y = np.append(self.y, out)
 
-    #def plot(self):
+    # def plot(self):
     #
     #    self.spectrogram.setYRange(0, 1025)
     #    plt.close()
@@ -314,7 +362,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         awrite(self.y)
         self.savings += 1
         dialog = QMessageBox(self)
-        dialog.setText('File saved as '+filename)
+        dialog.setText('File saved as ' + filename)
         dialog.setWindowTitle('File saved!')
         dialog.setStyleSheet('color:white;')
         dialog.exec_()
