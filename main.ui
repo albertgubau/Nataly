@@ -6,25 +6,102 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1163</width>
-    <height>649</height>
+    <width>1167</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>NewSMSTools</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#2e2e2e;</string>
+   <string notr="true">
+QMainWindow{
+	background-color:#1f1f1f;
+}
+
+QLabel{
+	color:white;
+}
+
+QPushButton {
+	background-color: #0096FF;
+	
+	border-radius: 10px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};
+
+
+
+
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>30</y>
-      <width>1011</width>
-      <height>571</height>
+      <y>20</y>
+      <width>1021</width>
+      <height>581</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+QStackedWidget{
+	background-color:#2e2e2e;
+   border-radius:10px;
+}
+
+
+QPushButton {
+	background-color: #0096FF;
+	border-radius: 10px;
+	color: white;
+
+}
+
+QPushButton:!enabled{
+	background-color: rgb(119, 118, 123);
+color: rgb(154, 153, 150);
+}
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+}
+
+QCheckBox {
+	color:white;
+}
+
+QCheckBox::indicator { 
+	border: 1px solid; 
+	border-radius:7px;
+	border-color: white; }
+
+QCheckBox::indicator:checked { 
+background-color:#0096FF; 
+}
+
+QSlider {
+            background-color: #FF3B3B3B;
+            color: white;
+            border : 0.1em;
+            height:  1.5em;
+border-radius:7px;
+        }
+
+QSlider:hover {
+       background-color:rgb(94, 92, 100);
+} ;
+</string>
     </property>
    </widget>
    <widget class="QPushButton" name="page1_btn">
@@ -37,19 +114,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-color: #0096FF;
-	
-	border-radius: 10px;
-	color: white;
-
-}
-
-
-QPushButton:hover {
-	background-color: #3063A5;
-
-};</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>SMSA</string>
@@ -65,79 +130,10 @@ QPushButton:hover {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-color: #0096FF;
-	border-radius: 10px;
-	color: white;
-
-}
-
-
-QPushButton:hover {
-	background-color: #3063A5;
-
-};</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>RTST</string>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>10</y>
-      <width>1001</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_2">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>30</y>
-      <width>20</width>
-      <height>571</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_3">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>600</y>
-      <width>1001</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_4">
-    <property name="geometry">
-     <rect>
-      <x>1140</x>
-      <y>30</y>
-      <width>20</width>
-      <height>571</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -155,7 +151,7 @@ QPushButton:hover {
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:white;</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>MODELS</string>
@@ -164,19 +160,97 @@ QPushButton:hover {
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>530</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Using audio analysis/synthesis from</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="essentia_logo">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>560</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>assets/essentia_logo.svg</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="change_theme_btn">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>490</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	background-color: #0096FF;
+	border-radius: 15px;
+	color: white;
+
+}
+
+
+QPushButton:hover {
+	background-color: #3063A5;
+
+};</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1163</width>
+     <width>1167</width>
      <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="essentia_logo.qrc"/>
+ </resources>
  <connections/>
 </ui>

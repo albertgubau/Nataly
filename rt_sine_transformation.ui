@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#2e2e2e;</string>
+   <string notr="true"/>
   </property>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
@@ -34,7 +34,7 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white;</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>Real-Time Sinusoidal Model Transformation</string>
@@ -50,18 +50,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QSlider {
-            background-color: #FF3B3B3B;
-            color: white;
-            border : 0.1em;
-            height:  1.5em;
-border-radius:7px;
-        }
-
-QSlider:hover {
-       background-color:rgb(94, 92, 100);
-       
-}        </string>
+    <string notr="true">       </string>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
@@ -82,7 +71,7 @@ QSlider:hover {
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white;
+    <string notr="true">
 </string>
    </property>
    <property name="text">
@@ -105,18 +94,7 @@ QSlider:hover {
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="styleSheet">
-    <string notr="true">QCheckBox {
-	color:white;
-}
-
-QCheckBox::indicator { 
-	border: 1px solid; 
-	border-radius:7px;
-	border-color: white; }
-
-QCheckBox::indicator:checked { 
-background-color:#0096FF; 
-}</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>Listen?</string>
@@ -132,18 +110,7 @@ background-color:#0096FF;
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QPushButton {
-	background-color: #0096FF;
-	border-radius: 10px;
-	color: white;
-
-}
-
-
-QPushButton:hover {
-	background-color: #3063A5;
-
-};</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>R</string>
@@ -210,9 +177,7 @@ QPushButton:hover {
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">QLabel{
-	color: #2e2e2e;
-}</string>
+    <string notr="true">color:#2e2e2e</string>
    </property>
    <property name="text">
     <string>Recording</string>

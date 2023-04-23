@@ -19,6 +19,8 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         uic.loadUi('sinusoidal_spec_anal.ui', self)
 
+        self.dark_mode = True
+
         self.fft_size_inpt = self.findChild(QLineEdit, "fft_size_inpt")
         self.fft_size_inpt.setEnabled(False)
         self.fft_size_inpt.setText('2048')
@@ -167,7 +169,7 @@ class Sinusoidal_Spec_Anal(QWidget):
     def browse_file(self):
 
         # Open File Dialog (returns a tuple)
-        fname = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*)",
+        fname = QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)",
                                             options=QFileDialog.DontUseNativeDialog)
 
         # Output filename to screen
@@ -175,12 +177,18 @@ class Sinusoidal_Spec_Anal(QWidget):
             try:
                 self.x = es.MonoLoader(filename=str(fname[0]))()
 
-            except RuntimeError as e:
+            except RuntimeError:
                 dialog = QMessageBox(self)
                 dialog.setText('Yo have not loaded any file or the file you have loaded is not an audio file, '
                                'please load an audio file to analyze its spectrogram.')
                 dialog.setWindowTitle('No file loaded!')
-                dialog.setStyleSheet('color:white;')
+
+                if self.dark_mode:
+                    dialog.setStyleSheet('background-color:#2e2e2e;'
+                                         'color:white;')
+                else:
+                    dialog.setStyleSheet('background-color:#dbdbdb;'
+                                         'color:black;')
                 dialog.exec_()
                 return None
 
@@ -339,33 +347,8 @@ class Sinusoidal_Spec_Anal(QWidget):
             # Save result
             self.y = np.append(self.y, out)
 
-    # def plot(self):
-    #
-    #    self.spectrogram.setYRange(0, 1025)
-    #    plt.close()
-    #    plt.figure()
-    #    plt.subplot(2, 1, 1)
-    #    # Plotting with Matplotlib in comparison
-    #    plt.pcolormesh(np.transpose(self.spec))
-    #    plt.xlabel("Frames")
-    #    plt.ylabel("Bins")
-    #    plt.colorbar()
-    #
-    #    # This plot is not correct I think, maybe for the result of applying the essentia function
-    #    plt.subplot(2, 1, 2)
-    #    if self.sinusoids2.shape[1] > 0:
-    #        self.sinusoids2[self.sinusoids2 <= 0] = np.nan
-    #        plt.plot(self.sinusoids2)
-    #        plt.axis([0, 187, 0, 22000])
-    #        plt.xlabel("Frames")
-    #        plt.ylabel("Frequencies")
-    #        plt.title('frequencies of sinusoidal tracks')
-    #
-    #    plt.show()
-
-
     def play_original(self):
-        sd.play(self.x,fs)
+        sd.play(self.x, fs)
 
     def stop_original(self):
         sd.stop()
@@ -391,3 +374,9 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.slider.setValue(100)
         self.multiplicator = 1
         self.synthesis()
+
+    def change_theme(self):
+        if self.dark_mode:
+            self.win.setBackground('#2e2e2e')
+        else:
+            self.win.setBackground('#eaebeb')

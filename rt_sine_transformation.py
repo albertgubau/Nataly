@@ -12,7 +12,6 @@ from PyQt5.QtCore import QRect
 
 fs = 44100
 
-
 # Instantiate the Essentia Algorithms
 w = es.Windowing(type='hamming', size=2048)
 fft = es.FFT(size=2048)
@@ -32,6 +31,8 @@ class Rt_sine_transformation(QWidget):
         super().__init__(*args, **kwargs)
 
         uic.loadUi('rt_sine_transformation.ui', self)
+
+        self.dark_mode = True
 
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget(self)
@@ -60,7 +61,6 @@ class Rt_sine_transformation(QWidget):
         self.reset_button = self.findChild(QPushButton, "reset_btn")
         self.reset_button.clicked.connect(lambda: self.reset_slider())
 
-
         # OLD CODE FROM PREVIOUS APP
         self.traces = dict()
 
@@ -74,18 +74,6 @@ class Rt_sine_transformation(QWidget):
         wf_xaxis = pg.AxisItem(orientation='bottom')
         wf_xaxis.setTicks([wf_xlabels])
         wf_yaxis = pg.AxisItem(orientation='left')
-
-        # Windowed Waveform x/y axis labels
-        #wf_w_xlabels = [(0, '0'), (2048, '2048')]
-        #wf_w_xaxis = pg.AxisItem(orientation='bottom')
-        #wf_w_xaxis.setTicks([wf_w_xlabels])
-        #wf_w_yaxis = pg.AxisItem(orientation='left')
-
-        # Out Waveform x/y axis labels
-        #out_xlabels = [(0, '0'), (2048, '2048')]
-        #out_xaxis = pg.AxisItem(orientation='bottom')
-        #out_xaxis.setTicks([out_xlabels])
-        #out_yaxis = pg.AxisItem(orientation='left')
 
         # Spectrum x/y axis labels
         sp_xlabels = [
@@ -101,12 +89,6 @@ class Rt_sine_transformation(QWidget):
         )
         self.waveform.hideAxis('left')
         self.waveform.hideAxis('bottom')
-        # Add plots to the window
-        #self.w_waveform = self.win.addPlot(
-        #    title='Windowed WAVEFORM', row=1, col=0, axisItems={'bottom': wf_w_xaxis, 'left': wf_w_yaxis},
-        #)
-        #self.w_waveform.hideAxis('left')
-        #self.w_waveform.hideAxis('bottom')
 
         self.win.ci.layout.setSpacing(30)
 
@@ -115,14 +97,6 @@ class Rt_sine_transformation(QWidget):
         )
 
         self.spectrum.hideAxis('left')
-
-
-        #self.out = self.win.addPlot(
-        #    title='OUT', row=3, col=0, axisItems={'bottom': out_xaxis, 'left': out_yaxis},
-        #)
-
-        #self.out.hideAxis('left')
-        #self.out.hideAxis('bottom')
 
         self.iterations = 0
         self.wf_data = np.array([])
@@ -158,20 +132,24 @@ class Rt_sine_transformation(QWidget):
 
         self.counter = 0
         self.recordings = 0
+
     def record(self):
 
         self.counter += 1
         self.recording = not self.recording
 
-        if(self.recording):
+        if self.recording:
             self.red_border.setStyleSheet("border: 3px solid red;")
             self.recording_label.setStyleSheet("color: red;")
             self.record_button.setText("STOP")
 
-        if(self.counter%2 == 0):
-            self.recordings+=1
+        if self.counter % 2 == 0:
+            self.recordings += 1
             self.red_border.setStyleSheet("border:none;")
-            self.recording_label.setStyleSheet("color: #2e2e2e;")
+            if self.dark_mode:
+                self.recording_label.setStyleSheet("color: #2e2e2e;")
+            else:
+                self.recording_label.setStyleSheet("color: #eaebeb;")
             self.record_button.setText("Record")
             self.saveResult()
 
@@ -192,23 +170,13 @@ class Rt_sine_transformation(QWidget):
             if name == 'waveform':
                 self.traces[name] = self.waveform.plot(pen='c', width=3)
                 self.waveform.setYRange(-0.05, 0.05, padding=0)
-                #self.waveform.setXRange(0, self.CHUNK, padding=0.005)
-
-            #if name == 'w_waveform':
-            #    self.traces[name] = self.w_waveform.plot(pen='c', width=3)
-            #    self.w_waveform.setYRange(-5e-5, 5e-5, padding=0.005)
-            #    #self.w_waveform.setXRange(0, self.CHUNK, padding=0.005)
+                # self.waveform.setXRange(0, self.CHUNK, padding=0.005)
 
             if name == 'spectrum':
                 self.traces[name] = self.spectrum.plot(pen='m', width=3)
                 self.spectrum.setLogMode(x=True, y=True)
                 self.spectrum.setYRange(np.log10(0.001), np.log10(20), padding=0)
-                #self.spectrum.setXRange(np.log10(20), np.log10(self.RATE / 2), padding=0.005)
-
-            #if name == 'out':
-            #    self.traces[name] = self.out.plot(pen='c', width=3)
-            #    self.out.setYRange(-0.02, 0.02, padding=0.05)
-            #    #self.out.setXRange(0, self.CHUNK // 4, padding=0.005)
+                # self.spectrum.setXRange(np.log10(20), np.log10(self.RATE / 2), padding=0.005)
 
     def update_plots(self):
 
@@ -230,7 +198,7 @@ class Rt_sine_transformation(QWidget):
         self.set_plotdata(name='waveform', data_x=self.freqs, data_y=self.wf_data)
 
         # Li apliquem windowing i ho plotegem
-        #self.set_plotdata(name='w_waveform', data_x=self.z, data_y=w(self.wf_data))
+        # self.set_plotdata(name='w_waveform', data_x=self.z, data_y=w(self.wf_data))
 
         # Apliquem la fft al windowed frame
         fft_signal = fft(w(self.wf_data))
@@ -284,7 +252,7 @@ class Rt_sine_transformation(QWidget):
 
         out = overl(ifft(fft_synth))  # Tenim un frame de 512 samples
 
-        #self.set_plotdata(name='out', data_x=self.j, data_y=out)
+        # self.set_plotdata(name='out', data_x=self.j, data_y=out)
 
         # Save result and play it simultaneously
         self.result = np.append(self.result, out)
@@ -316,3 +284,11 @@ class Rt_sine_transformation(QWidget):
         dialog.setWindowTitle('File saved!')
         dialog.setStyleSheet('color:white;')
         dialog.exec_()
+
+    def change_theme(self):
+        if self.dark_mode:
+            self.win.setBackground('#2e2e2e')
+            self.recording_label.setStyleSheet('color: #2e2e2e')
+        else:
+            self.win.setBackground('#eaebeb')
+            self.recording_label.setStyleSheet('color: #eaebeb')
