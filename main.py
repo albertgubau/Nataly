@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
 
             self.rt_sine_trans_tab.dark_mode = False
             self.rt_sine_trans_tab.change_theme()
-            self.change_theme_btn.setText('\u263E')
+            self.change_theme_btn.setText(' \u263E')
 
         else:
             # Change the main window theme colors

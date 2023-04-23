@@ -41,9 +41,6 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.combo.addItem('hann')
         self.combo.setEnabled(False)
 
-        # self.compute_button = self.findChild(QPushButton, "compute_btn")
-        # self.compute_button.clicked.connect(lambda: self.plot())
-
         self.play_original_button = self.findChild(QPushButton, "play_original_btn")
         self.play_original_button.setEnabled(False)
         self.play_original_button.clicked.connect(lambda: self.play_original())
@@ -107,6 +104,9 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.spectrogram.setLabel('bottom', "Time (s)")
         self.spectrogram.setLabel('left', "Frequency (Hz)")
+
+        self.spectrogram.getAxis('left').setTextPen('gray')
+        self.spectrogram.getAxis('bottom').setTextPen('gray')
 
         # Item for displaying image data
         self.img = pg.ImageItem()
@@ -378,5 +378,9 @@ class Sinusoidal_Spec_Anal(QWidget):
     def change_theme(self):
         if self.dark_mode:
             self.win.setBackground('#2e2e2e')
+            self.spectrogram.getAxis('left').setTextPen('gray')
+            self.spectrogram.getAxis('bottom').setTextPen('gray')
         else:
             self.win.setBackground('#eaebeb')
+            self.spectrogram.getAxis('left').setTextPen('black')
+            self.spectrogram.getAxis('bottom').setTextPen('black')

@@ -279,10 +279,16 @@ class Rt_sine_transformation(QWidget):
         filename = 'output_rt_sinusoidal_' + str(self.recordings) + '.wav'
         awrite = es.MonoWriter(filename=filename, sampleRate=fs)
         awrite(self.result2)
+
         dialog = QMessageBox(self)
         dialog.setText('File saved as ' + filename)
         dialog.setWindowTitle('File saved!')
-        dialog.setStyleSheet('color:white;')
+        if self.dark_mode:
+            dialog.setStyleSheet('background-color:#2e2e2e;'
+                                 'color:white;')
+        else:
+            dialog.setStyleSheet('background-color:#dbdbdb;'
+                                 'color:black;')
         dialog.exec_()
 
     def change_theme(self):
