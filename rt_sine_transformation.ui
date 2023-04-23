@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>746</width>
-    <height>607</height>
+    <width>1016</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>50</x>
      <y>20</y>
      <width>701</width>
      <height>51</height>
@@ -43,10 +43,10 @@
   <widget class="QSlider" name="verticalSlider">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>160</y>
+     <x>50</x>
+     <y>180</y>
      <width>21</width>
-     <height>361</height>
+     <height>301</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -70,8 +70,8 @@ QSlider:hover {
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>130</y>
+     <x>40</x>
+     <y>150</y>
      <width>41</width>
      <height>21</height>
     </rect>
@@ -95,8 +95,8 @@ QSlider:hover {
   <widget class="QCheckBox" name="listen_checkbox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>530</y>
+     <x>30</x>
+     <y>490</y>
      <width>92</width>
      <height>23</height>
     </rect>
@@ -125,8 +125,8 @@ background-color:#0096FF;
   <widget class="QPushButton" name="reset_btn">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>560</y>
+     <x>50</x>
+     <y>520</y>
      <width>21</width>
      <height>21</height>
     </rect>
@@ -152,8 +152,8 @@ QPushButton:hover {
   <widget class="QPushButton" name="record_btn">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>90</y>
+     <x>30</x>
+     <y>110</y>
      <width>61</width>
      <height>25</height>
     </rect>
@@ -177,29 +177,58 @@ QPushButton:hover {
     <string>Record</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="red_border">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>731</width>
-     <height>581</height>
+     <width>961</width>
+     <height>551</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">QLabel{
+	border-color: rgb(192, 97, 203);
+}</string>
    </property>
    <property name="text">
     <string/>
    </property>
   </widget>
-  <zorder>label_3</zorder>
+  <widget class="QLabel" name="recording_label">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>30</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>17</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel{
+	color: #2e2e2e;
+}</string>
+   </property>
+   <property name="text">
+    <string>Recording</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <zorder>red_border</zorder>
   <zorder>label_2</zorder>
   <zorder>verticalSlider</zorder>
   <zorder>label</zorder>
   <zorder>listen_checkbox</zorder>
   <zorder>reset_btn</zorder>
   <zorder>record_btn</zorder>
+  <zorder>recording_label</zorder>
  </widget>
  <resources/>
  <connections/>

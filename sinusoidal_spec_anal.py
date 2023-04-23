@@ -42,6 +42,14 @@ class Sinusoidal_Spec_Anal(QWidget):
         # self.compute_button = self.findChild(QPushButton, "compute_btn")
         # self.compute_button.clicked.connect(lambda: self.plot())
 
+        self.play_original_button = self.findChild(QPushButton, "play_original_btn")
+        self.play_original_button.setEnabled(False)
+        self.play_original_button.clicked.connect(lambda: self.play_original())
+
+        self.pause_original_button = self.findChild(QPushButton, "pause_original_btn")
+        self.pause_original_button.setEnabled(False)
+        self.pause_original_button.clicked.connect(lambda: self.stop_original())
+
         self.play_button = self.findChild(QPushButton, "play_btn")
         self.play_button.setEnabled(False)
         self.play_button.clicked.connect(lambda: self.play_result())
@@ -79,7 +87,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         pg.setConfigOptions(antialias=True)
 
         self.win = pg.GraphicsLayoutWidget(self)
-        self.win.setGeometry(QRect(20, 160, 721, 371))
+        self.win.setGeometry(QRect(90, 160, 700, 371))
         self.win.setBackground('#2e2e2e')
 
         # Interpret image data as row-major instead of col-major
@@ -140,9 +148,9 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.savings = 0
 
-        self.slider = self.findChild(QSlider, "horizontalSlider")
+        self.slider = self.findChild(QSlider, "verticalSlider")
         self.slider.setEnabled(False)
-        self.label = self.findChild(QLabel, "label")
+        self.slider_label = self.findChild(QLabel, "slider_label")
 
         self.multiplicator = 1.0
 
@@ -154,7 +162,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def slide_it(self, value):
         self.multiplicator = float(value) / 100
-        self.label.setText("{0:.4g}".format(self.multiplicator))
+        self.slider_label.setText("{0:.4g}".format(self.multiplicator))
 
     def browse_file(self):
 
@@ -166,6 +174,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         if fname:
             try:
                 self.x = es.MonoLoader(filename=str(fname[0]))()
+
             except RuntimeError as e:
                 dialog = QMessageBox(self)
                 dialog.setText('Yo have not loaded any file or the file you have loaded is not an audio file, '
@@ -177,6 +186,8 @@ class Sinusoidal_Spec_Anal(QWidget):
 
             self.input_text_box.setText(str(fname[0]))  # We should modifiy the input text box
 
+            self.play_original_button.setEnabled(True)
+            self.pause_original_button.setEnabled(True)
             self.play_button.setEnabled(True)
             self.pause_button.setEnabled(True)
             self.save_button.setEnabled(True)
@@ -220,6 +231,8 @@ class Sinusoidal_Spec_Anal(QWidget):
         sp_yaxis.setScale(scale=fs / self.N)
 
         self.spectrogram.setAxisItems(axisItems={'bottom': sp_xaxis, 'left': sp_yaxis})
+        self.spectrogram.setLabel('bottom', "Time (s)")
+        self.spectrogram.setLabel('left', "Frequency (Hz)")
 
         self.compute()
 
@@ -349,6 +362,13 @@ class Sinusoidal_Spec_Anal(QWidget):
     #        plt.title('frequencies of sinusoidal tracks')
     #
     #    plt.show()
+
+
+    def play_original(self):
+        sd.play(self.x,fs)
+
+    def stop_original(self):
+        sd.stop()
 
     def play_result(self):
         sd.play(self.y, fs)
