@@ -27,15 +27,19 @@ Per executar el projecte jo és recomanable utilitzar un interpreter de Python v
 - pyqtgraph v0.13.1
 
 
-![](documentation_images/ubuntu_dark_spec_analyzer.PNG)
+![](documentation_images/ubuntu_dark_spec_analyzer.png)
+
 | Dark Themed Spectrogram Analyzer
 
-![](documentation_images/ubuntu_light_spec_analyzer.PNG)
+![](documentation_images/ubuntu_light_spec_analyzer.png)
+
 | Light Themed Spectrogram Analyzer
 
-![](documentation_images/ubuntu_dark_rt_sine_trans.PNG)
+![](documentation_images/ubuntu_dark_rt_sine_trans.png)
+
 | Dark Theme Real-Time Sinusoidal Transformations
 
-![](documentation_images/ubuntu_light_rt_sine_trans.PNG)
+![](documentation_images/ubuntu_light_rt_sine_trans.png)
+
 | Light Themed Real-Time Sinusoidal Transformations
 
