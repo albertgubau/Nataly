@@ -21,25 +21,37 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.dark_mode = True
 
+        self.combo = self.findChild(QComboBox, "comboBox")
+        self.combo.addItem('hamming')
+        self.combo.addItem('hann')
+        self.combo.setEnabled(False)
+        self.combo.currentIndexChanged.connect(lambda: self.changed_inputs())
+
         self.fft_size_inpt = self.findChild(QLineEdit, "fft_size_inpt")
         self.fft_size_inpt.setEnabled(False)
         self.fft_size_inpt.setText('2048')
+        self.fft_size_inpt.textChanged.connect(lambda: self.changed_inputs())
+
         self.window_size_inpt = self.findChild(QLineEdit, "window_size_inpt")
         self.window_size_inpt.setEnabled(False)
         self.window_size_inpt.setText('2000')
+        self.window_size_inpt.textChanged.connect(lambda: self.changed_inputs())
+
+        self.reset_default_btn = self.findChild(QPushButton, "reset_default_btn")
+        self.reset_default_btn.setEnabled(False)
+        self.reset_default_btn.clicked.connect(lambda: self.reset_default_inpts())
 
         self.recompute_btn = self.findChild(QPushButton, "recompute_btn")
         self.recompute_btn.setEnabled(False)
         self.recompute_btn.clicked.connect(lambda: self.change_parameters())
 
+        self.changed_inputs_label = self.findChild(QLabel, "changed_params")
+        self.changed_inputs_label2 = self.findChild(QLabel, "not_applied_label")
+        self.changed_inputs_label2.setStyleSheet('color:#2e2e2e')
+
         self.browse_button = self.findChild(QPushButton, "browse_btn")
         self.input_text_box = self.findChild(QLineEdit, "filename")
         self.browse_button.clicked.connect(lambda: self.browse_file())
-
-        self.combo = self.findChild(QComboBox, "comboBox")
-        self.combo.addItem('hamming')
-        self.combo.addItem('hann')
-        self.combo.setEnabled(False)
 
         self.play_original_button = self.findChild(QPushButton, "play_original_btn")
         self.play_original_button.setEnabled(False)
@@ -166,6 +178,35 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.multiplicator = float(value) / 100
         self.slider_label.setText("{0:.4g}".format(self.multiplicator))
 
+    def applied_changes(self):
+        self.changed_inputs_label.setStyleSheet('')
+        if (self.dark_mode):
+            self.changed_inputs_label2.setStyleSheet('QLabel{'
+                                                     'color: #2e2e2e;'
+                                                     '}')
+        else:
+            self.changed_inputs_label2.setStyleSheet('QLabel{'
+                                                     'color: #eaebeb;'
+                                                     '}')
+
+    def reset_default_inpts(self):
+        self.window_size_inpt.setText('2000')
+        self.fft_size_inpt.setText('2048')
+        self.combo.setCurrentIndex(0)
+
+    def changed_inputs(self):
+
+        self.changed_inputs_label.setStyleSheet('QLabel{'
+                                                'background-color:rgb(255, 190, 111);'
+                                                'border-radius:10px;'
+                                                '}')
+
+        self.changed_inputs_label2.setStyleSheet('QLabel{'
+                                                 'background-color: #2e2e2e;'
+                                                 'border-radius:10px;'
+                                                 'color: rgb(255, 190, 111);'
+                                                 '}')
+
     def browse_file(self):
 
         # Open File Dialog (returns a tuple)
@@ -205,6 +246,7 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.window_size_inpt.setEnabled(True)
             self.recompute_btn.setEnabled(True)
             self.combo.setEnabled(True)
+            self.reset_default_btn.setEnabled(True)
 
             self.img.clear()
 
@@ -215,34 +257,49 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def change_parameters(self):
 
-        self.N = int(self.fft_size_inpt.text())
-        self.H = N // 4
-        self.M = int(self.window_size_inpt.text())
+        try:
+            self.N = int(self.fft_size_inpt.text())
+            self.H = N // 4
+            self.M = int(self.window_size_inpt.text())
 
-        # Instantiate the Essentia Algorithms
-        self.w = es.Windowing(type=self.combo.currentText(), size=self.M - 1)
-        self.spectrum = es.Spectrum()
-        self.fft = es.FFT(size=N)
-        self.sineAnal = es.SineModelAnal(sampleRate=fs,
-                                         maxnSines=150,
-                                         magnitudeThreshold=-80,
-                                         freqDevOffset=10,
-                                         freqDevSlope=0.001)
+            # Instantiate the Essentia Algorithms
+            self.w = es.Windowing(type=self.combo.currentText(), size=self.M - 1)
+            self.spectrum = es.Spectrum()
+            self.fft = es.FFT(size=N)
+            self.sineAnal = es.SineModelAnal(sampleRate=fs,
+                                             maxnSines=150,
+                                             magnitudeThreshold=-80,
+                                             freqDevOffset=10,
+                                             freqDevSlope=0.001)
 
-        self.sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
-        self.ifft = es.IFFT(size=N)
-        self.overl = es.OverlapAdd(frameSize=N, hopSize=H)
+            self.sineSynth = es.SineModelSynth(sampleRate=fs, fftSize=N, hopSize=H)
+            self.ifft = es.IFFT(size=N)
+            self.overl = es.OverlapAdd(frameSize=N, hopSize=H)
 
-        sp_xaxis = pg.AxisItem(orientation='bottom')
-        sp_xaxis.setScale(scale=self.H / fs)
-        sp_yaxis = pg.AxisItem(orientation='left')
-        sp_yaxis.setScale(scale=fs / self.N)
+            sp_xaxis = pg.AxisItem(orientation='bottom')
+            sp_xaxis.setScale(scale=self.H / fs)
+            sp_yaxis = pg.AxisItem(orientation='left')
+            sp_yaxis.setScale(scale=fs / self.N)
 
-        self.spectrogram.setAxisItems(axisItems={'bottom': sp_xaxis, 'left': sp_yaxis})
-        self.spectrogram.setLabel('bottom', "Time (s)")
-        self.spectrogram.setLabel('left', "Frequency (Hz)")
+            self.spectrogram.setAxisItems(axisItems={'bottom': sp_xaxis, 'left': sp_yaxis})
+            self.spectrogram.setLabel('bottom', "Time (s)")
+            self.spectrogram.setLabel('left', "Frequency (Hz)")
 
-        self.compute()
+            self.compute()
+
+            self.applied_changes()
+
+        except (RuntimeError, ValueError) as e:
+            dialog = QMessageBox(self)
+            dialog.setText(str(e))
+            dialog.setWindowTitle('Wrong analysis parameters!')
+            if self.dark_mode:
+                dialog.setStyleSheet('background-color:#2e2e2e;'
+                                     'color:white;')
+            else:
+                dialog.setStyleSheet('background-color:#dbdbdb;'
+                                     'color:black;')
+            dialog.exec_()
 
     def compute(self):
 
@@ -364,6 +421,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         awrite = es.MonoWriter(filename=filename, sampleRate=fs)
         awrite(self.y)
         self.savings += 1
+
         dialog = QMessageBox(self)
         dialog.setText('File saved as ' + filename)
         dialog.setWindowTitle('File saved!')
@@ -380,7 +438,9 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.win.setBackground('#2e2e2e')
             self.spectrogram.getAxis('left').setTextPen('gray')
             self.spectrogram.getAxis('bottom').setTextPen('gray')
+            self.changed_inputs_label2.setStyleSheet('color:#2e2e2e')
         else:
             self.win.setBackground('#eaebeb')
             self.spectrogram.getAxis('left').setTextPen('black')
             self.spectrogram.getAxis('bottom').setTextPen('black')
+            self.changed_inputs_label2.setStyleSheet('color:#eaebeb')
