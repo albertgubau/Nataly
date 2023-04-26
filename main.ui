@@ -154,7 +154,7 @@ QSlider:hover {
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>MODELS</string>
+     <string>NATALY</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

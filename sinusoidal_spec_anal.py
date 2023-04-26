@@ -20,6 +20,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         uic.loadUi('sinusoidal_spec_anal.ui', self)
 
         self.dark_mode = True
+        self.not_applied_changes = False
 
         self.combo = self.findChild(QComboBox, "comboBox")
         self.combo.addItem('hamming')
@@ -188,6 +189,7 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.changed_inputs_label2.setStyleSheet('QLabel{'
                                                      'color: #eaebeb;'
                                                      '}')
+        self.not_applied_changes = False
 
     def reset_default_inpts(self):
         self.window_size_inpt.setText('2000')
@@ -196,6 +198,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
     def changed_inputs(self):
 
+        self.not_applied_changes = True
         self.changed_inputs_label.setStyleSheet('QLabel{'
                                                 'background-color:rgb(255, 190, 111);'
                                                 'border-radius:10px;'
@@ -438,9 +441,11 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.win.setBackground('#2e2e2e')
             self.spectrogram.getAxis('left').setTextPen('gray')
             self.spectrogram.getAxis('bottom').setTextPen('gray')
-            self.changed_inputs_label2.setStyleSheet('color:#2e2e2e')
+            if not self.not_applied_changes:
+                self.changed_inputs_label2.setStyleSheet('color:#2e2e2e')
         else:
             self.win.setBackground('#eaebeb')
             self.spectrogram.getAxis('left').setTextPen('black')
             self.spectrogram.getAxis('bottom').setTextPen('black')
-            self.changed_inputs_label2.setStyleSheet('color:#eaebeb')
+            if not self.not_applied_changes:
+                self.changed_inputs_label2.setStyleSheet('color:#eaebeb')
