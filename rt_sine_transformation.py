@@ -294,7 +294,9 @@ class Rt_sine_transformation(QWidget):
     def change_theme(self):
         if self.dark_mode:
             self.win.setBackground('#2e2e2e')
-            self.recording_label.setStyleSheet('color: #2e2e2e')
+            if not self.recording:
+                self.recording_label.setStyleSheet('color: #2e2e2e')
         else:
             self.win.setBackground('#eaebeb')
-            self.recording_label.setStyleSheet('color: #eaebeb')
+            if not self.recording:
+                self.recording_label.setStyleSheet('color: #eaebeb')
