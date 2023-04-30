@@ -1,5 +1,6 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton
+from PyQt5.QtGui import QPixmap
 
 from sinusoidal_spec_anal import Sinusoidal_Spec_Anal
 from rt_sine_transformation import Rt_sine_transformation
@@ -12,9 +13,11 @@ class MainWindow(QMainWindow):
 
         self.dark_mode = True
         self.essentia_logo = self.findChild(QLabel, "essentia_logo")
+        self.nataly_logo = self.findChild(QLabel, "nataly_logo")
 
         self.page1_btn.clicked.connect(self.go_to_first)
-        self.page3_btn.clicked.connect(self.go_to_second)
+        self.page1_btn.setStyleSheet('border:3px solid gray;')
+        self.page2_btn.clicked.connect(self.go_to_second)
 
         # First page
         self.sinusoidal_spec_anal_tab = Sinusoidal_Spec_Anal()
@@ -29,10 +32,14 @@ class MainWindow(QMainWindow):
         self.change_theme_btn.setText('\u263C')
 
     def go_to_first(self):
+        self.page2_btn.setStyleSheet('')
+        self.page1_btn.setStyleSheet('border:3px solid gray;')
         self.stackedWidget.setCurrentIndex(0)
         self.rt_sine_trans_tab.listening = False
 
     def go_to_second(self):
+        self.page1_btn.setStyleSheet('')
+        self.page2_btn.setStyleSheet('border:3px solid gray;')
         self.stackedWidget.setCurrentIndex(1)
         self.rt_sine_trans_tab.listening = True
 
@@ -54,8 +61,9 @@ class MainWindow(QMainWindow):
                                'background-color:#dbdbdb '
                                '};')
 
-            self.essentia_logo.setStyleSheet('background-color:#979da2;'
-                                             'border-radius:10px;')
+            self.essentia_logo.setPixmap(QPixmap('./assets/essentia_logo_light.png'))
+
+            self.nataly_logo.setPixmap(QPixmap('./assets/nataly_logo_light.png'))
 
             self.stackedWidget.setStyleSheet(''
                                              'QStackedWidget{'
@@ -118,7 +126,9 @@ class MainWindow(QMainWindow):
                                'background-color:#1f1f1f '
                                '};')
 
-            self.essentia_logo.setStyleSheet('background-color:#1f1f1f;')
+            self.essentia_logo.setPixmap(QPixmap('./assets/essentia_logo.svg'))
+
+            self.nataly_logo.setPixmap(QPixmap('./assets/nataly_logo.png'))
 
             self.stackedWidget.setStyleSheet(''
                                              'QStackedWidget{'

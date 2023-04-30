@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>NewSMSTools</string>
+   <string>Nataly</string>
   </property>
   <property name="styleSheet">
    <string notr="true">
@@ -28,13 +28,11 @@ QPushButton {
 	
 	border-radius: 10px;
 	color: white;
-
 }
 
 
 QPushButton:hover {
 	background-color: #3063A5;
-
 };
 
 
@@ -108,7 +106,7 @@ QSlider:hover {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>70</y>
+      <y>90</y>
       <width>91</width>
       <height>25</height>
      </rect>
@@ -120,11 +118,11 @@ QSlider:hover {
      <string>SMSA</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="page3_btn">
+   <widget class="QPushButton" name="page2_btn">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>130</y>
       <width>91</width>
       <height>25</height>
      </rect>
@@ -134,30 +132,6 @@ QSlider:hover {
     </property>
     <property name="text">
      <string>RTST</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>15</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>NATALY</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -236,6 +210,34 @@ QPushButton:hover {
      <string/>
     </property>
    </widget>
+   <widget class="QLabel" name="nataly_logo">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>111</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>assets/nataly_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -250,7 +252,7 @@ QPushButton:hover {
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="essentia_logo.qrc"/>
+  <include location="assets/nataly_logo.qrc"/>
  </resources>
  <connections/>
 </ui>
