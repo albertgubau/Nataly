@@ -5,7 +5,6 @@ from PyQt5.QtGui import QPixmap
 from sinusoidal_spec_anal import Sinusoidal_Spec_Anal
 from rt_sine_transformation import Rt_sine_transformation
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()

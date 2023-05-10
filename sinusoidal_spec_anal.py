@@ -1,10 +1,11 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog, QMessageBox, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, QLineEdit, QFileDialog, QMessageBox, QComboBox
 from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
+from spec_help_window import Ui_SpecHelpWindow
+
 import numpy as np
-# import matplotlib.pyplot as plt
 import essentia.standard as es
 import sounddevice as sd
 
@@ -21,6 +22,9 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.dark_mode = True
         self.not_applied_changes = False
+
+        self.help_btn = self.findChild(QPushButton, "help_btn")
+        self.help_btn.clicked.connect(lambda: self.open_help_window())
 
         self.combo = self.findChild(QComboBox, "comboBox")
         self.combo.addItem('hamming')
@@ -449,3 +453,9 @@ class Sinusoidal_Spec_Anal(QWidget):
             self.spectrogram.getAxis('bottom').setTextPen('black')
             if not self.not_applied_changes:
                 self.changed_inputs_label2.setStyleSheet('color:#eaebeb')
+
+    def open_help_window(self):
+        self.window = QMainWindow()
+        self.ui = Ui_SpecHelpWindow()
+        self.ui.setupUi(self.window)
+        self.window.show()
