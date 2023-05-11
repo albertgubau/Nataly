@@ -14,36 +14,27 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SpecHelpWindow(object):
     def setupUi(self, SpecHelpWindow):
         SpecHelpWindow.setObjectName("SpecHelpWindow")
-        SpecHelpWindow.resize(717, 558)
+        SpecHelpWindow.resize(814, 688)
+        SpecHelpWindow.setStyleSheet("background-color:white;")
         self.centralwidget = QtWidgets.QWidget(SpecHelpWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.info_content = QtWidgets.QLabel(self.centralwidget)
-        self.info_content.setGeometry(QtCore.QRect(70, 70, 591, 231))
-        self.info_content.setAutoFillBackground(False)
-        self.info_content.setStyleSheet("color:white;\n"
-"padding:10px;\n"
-"background-color:gray;\n"
-"border-radius:10px;\n"
-"")
-        self.info_content.setTextFormat(QtCore.Qt.AutoText)
-        self.info_content.setScaledContents(False)
-        self.info_content.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.info_content.setWordWrap(True)
-        self.info_content.setObjectName("info_content")
         self.spec_image = QtWidgets.QLabel(self.centralwidget)
-        self.spec_image.setGeometry(QtCore.QRect(190, 320, 331, 201))
-        self.spec_image.setStyleSheet("border-radius:10px;")
+        self.spec_image.setGeometry(QtCore.QRect(40, 80, 731, 581))
+        self.spec_image.setStyleSheet("border-radius:10px;\n"
+"")
+        self.spec_image.setText("")
+        self.spec_image.setPixmap(QtGui.QPixmap("assets/spec_anal_help.drawio.png"))
         self.spec_image.setScaledContents(True)
         self.spec_image.setObjectName("spec_image")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
-        self.title_label.setGeometry(QtCore.QRect(70, 0, 291, 71))
+        self.title_label.setGeometry(QtCore.QRect(30, 20, 291, 51))
         font = QtGui.QFont()
         font.setPointSize(23)
         self.title_label.setFont(font)
         self.title_label.setObjectName("title_label")
         SpecHelpWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(SpecHelpWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 717, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 814, 22))
         self.menubar.setObjectName("menubar")
         SpecHelpWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(SpecHelpWindow)
@@ -56,8 +47,6 @@ class Ui_SpecHelpWindow(object):
     def retranslateUi(self, SpecHelpWindow):
         _translate = QtCore.QCoreApplication.translate
         SpecHelpWindow.setWindowTitle(_translate("SpecHelpWindow", "Spectrogram Help Window"))
-        self.info_content.setText(_translate("SpecHelpWindow", "Explanation text"))
-        self.spec_image.setText(_translate("SpecHelpWindow", "Image"))
         self.title_label.setText(_translate("SpecHelpWindow", "CheatSheet Window"))
 
 

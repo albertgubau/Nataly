@@ -46,7 +46,7 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>190</x>
      <y>110</y>
      <width>401</width>
      <height>21</height>
@@ -74,7 +74,7 @@ QLineEdit:disabled{
   <widget class="QLabel" name="input_label">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>110</x>
      <y>110</y>
      <width>71</width>
      <height>21</height>
@@ -90,7 +90,7 @@ QLineEdit:disabled{
   <widget class="QPushButton" name="browse_btn">
    <property name="geometry">
     <rect>
-     <x>590</x>
+     <x>600</x>
      <y>110</y>
      <width>71</width>
      <height>21</height>
@@ -106,9 +106,9 @@ QLineEdit:disabled{
   <widget class="QLabel" name="slider_label">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>150</y>
-     <width>41</width>
+     <width>61</width>
      <height>21</height>
     </rect>
    </property>
@@ -177,7 +177,7 @@ QPushButton:hover {
   <widget class="QPushButton" name="play_original_btn">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>680</x>
      <y>110</y>
      <width>51</width>
      <height>21</height>
@@ -556,7 +556,7 @@ color:black;
   <widget class="QPushButton" name="pause_original_btn">
    <property name="geometry">
     <rect>
-     <x>730</x>
+     <x>740</x>
      <y>110</y>
      <width>61</width>
      <height>21</height>
@@ -617,6 +617,25 @@ color:black;
     <string>?</string>
    </property>
   </widget>
+  <widget class="QLabel" name="semitones_lbl">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>120</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Semitones</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
   <zorder>changed_params</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
@@ -631,6 +650,7 @@ color:black;
   <zorder>pause_original_btn</zorder>
   <zorder>not_applied_label</zorder>
   <zorder>help_btn</zorder>
+  <zorder>semitones_lbl</zorder>
  </widget>
  <resources/>
  <connections/>

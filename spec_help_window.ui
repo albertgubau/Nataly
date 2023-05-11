@@ -6,63 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
-    <height>558</height>
+    <width>814</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Spectrogram Help Window</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:white;</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="info_content">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>70</y>
-      <width>591</width>
-      <height>231</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color:white;
-padding:10px;
-background-color:gray;
-border-radius:10px;
-</string>
-    </property>
-    <property name="text">
-     <string>Explanation text</string>
-    </property>
-    <property name="textFormat">
-     <enum>Qt::AutoText</enum>
-    </property>
-    <property name="scaledContents">
-     <bool>false</bool>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="spec_image">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>320</y>
-      <width>331</width>
-      <height>201</height>
+      <x>40</x>
+      <y>80</y>
+      <width>731</width>
+      <height>581</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:10px;</string>
+     <string notr="true">border-radius:10px;
+</string>
     </property>
     <property name="text">
-     <string>Image</string>
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>assets/spec_anal_help.drawio.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -71,10 +43,10 @@ border-radius:10px;
    <widget class="QLabel" name="title_label">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>0</y>
+      <x>30</x>
+      <y>20</y>
       <width>291</width>
-      <height>71</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -92,7 +64,7 @@ border-radius:10px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>717</width>
+     <width>814</width>
      <height>22</height>
     </rect>
    </property>

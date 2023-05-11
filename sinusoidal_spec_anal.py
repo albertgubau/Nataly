@@ -174,14 +174,20 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.multiplicator = 1.0
 
         self.slider.valueChanged.connect(self.slide_it)
-        self.slider.setMinimum(50)
-        self.slider.setMaximum(200)
-        self.slider.setValue(100)
+        self.slider.setMinimum(-1200)
+        self.slider.setMaximum(1200)
+        self.slider.setValue(0)
         self.slider.sliderReleased.connect(lambda: self.synthesis())
 
     def slide_it(self, value):
-        self.multiplicator = float(value) / 100
-        self.slider_label.setText("{0:.4g}".format(self.multiplicator))
+        r = 2 ** (1 / 12)
+        self.multiplicator = r ** (float(value) / 100)
+        self.slider_label.setText("{0:.4g}".format(round(float(value) / 100, 1)))
+
+    def reset_slider(self):
+        self.slider.setValue(0)
+        self.multiplicator = 1.0
+        self.synthesis()
 
     def applied_changes(self):
         self.changed_inputs_label.setStyleSheet('')
@@ -434,11 +440,6 @@ class Sinusoidal_Spec_Anal(QWidget):
         dialog.setWindowTitle('File saved!')
         dialog.setStyleSheet('color:white;')
         dialog.exec_()
-
-    def reset_slider(self):
-        self.slider.setValue(100)
-        self.multiplicator = 1
-        self.synthesis()
 
     def change_theme(self):
         if self.dark_mode:

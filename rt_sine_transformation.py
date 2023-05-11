@@ -36,7 +36,7 @@ class Rt_sine_transformation(QWidget):
 
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget(self)
-        self.win.setGeometry(QRect(120, 80, 801, 450))
+        self.win.setGeometry(QRect(120, 80, 841, 450))
         self.win.setBackground('#2e2e2e')
 
         self.record_button = self.findChild(QPushButton, "record_btn")
@@ -47,9 +47,9 @@ class Rt_sine_transformation(QWidget):
 
         self.multiplicator = 1.0
         self.slider.valueChanged.connect(self.slide_it)
-        self.slider.setMinimum(50)
-        self.slider.setMaximum(200)
-        self.slider.setValue(100)
+        self.slider.setMinimum(-1200)
+        self.slider.setMaximum(1200)
+        self.slider.setValue(0)
 
         self.listen_checkbox = self.findChild(QCheckBox, "listen_checkbox")
 
@@ -57,6 +57,7 @@ class Rt_sine_transformation(QWidget):
 
         self.red_border = self.findChild(QLabel, "red_border")
         self.recording_label = self.findChild(QLabel, "recording_label")
+        self.recording_circle = self.findChild(QPushButton, "recording_circle")
 
         self.reset_button = self.findChild(QPushButton, "reset_btn")
         self.reset_button.clicked.connect(lambda: self.reset_slider())
@@ -139,8 +140,11 @@ class Rt_sine_transformation(QWidget):
         self.recording = not self.recording
 
         if self.recording:
-            self.red_border.setStyleSheet("border: 3px solid red;")
+            self.red_border.setStyleSheet("border:2px solid red;"
+                                          "border-radius:10px;")
             self.recording_label.setStyleSheet("color: red;")
+            self.recording_circle.setStyleSheet("background-color: rgb(237, 51, 59);"
+                                                "border-radius:8px;")
             self.record_button.setText("STOP")
 
         if self.counter % 2 == 0:
@@ -148,18 +152,21 @@ class Rt_sine_transformation(QWidget):
             self.red_border.setStyleSheet("border:none;")
             if self.dark_mode:
                 self.recording_label.setStyleSheet("color: #2e2e2e;")
+                self.recording_circle.setStyleSheet("background-color:#2e2e2e")
             else:
                 self.recording_label.setStyleSheet("color: #eaebeb;")
+                self.recording_circle.setStyleSheet("background-color:#eaebeb")
             self.record_button.setText("Record")
             self.saveResult()
 
     def slide_it(self, value):
-        self.multiplicator = float(value) / 100
-        self.label.setText("{0:.4g}".format(self.multiplicator))
+        r = 2 ** (1 / 12)
+        self.multiplicator = r ** (float(value) / 100)
+        self.label.setText("{0:.4g}".format(round(float(value) / 100,1)))
 
     def reset_slider(self):
-        self.slider.setValue(100)
-        self.multiplicator = 1
+        self.slider.setValue(0)
+        self.multiplicator = 1.0
 
     def set_plotdata(self, name, data_x, data_y):
 
@@ -296,7 +303,9 @@ class Rt_sine_transformation(QWidget):
             self.win.setBackground('#2e2e2e')
             if not self.recording:
                 self.recording_label.setStyleSheet('color: #2e2e2e')
+                self.recording_circle.setStyleSheet('background-color:#2e2e2e')
         else:
             self.win.setBackground('#eaebeb')
             if not self.recording:
                 self.recording_label.setStyleSheet('color: #eaebeb')
+                self.recording_circle.setStyleSheet('background-color:#eaebeb')
