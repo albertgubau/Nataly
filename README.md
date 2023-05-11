@@ -43,7 +43,7 @@ Per executar el projecte jo és recomanable utilitzar un interpreter de Python v
 
 | Light Themed Real-Time Sinusoidal Transformations
 
-![](ubuntu_spec_analyzer_help_window.png)
+![](documentation_images/ubuntu_spec_analyzer_help_window.png)
 
 | Sinusoidal Spectrogram Analyzer Helping Window
 
