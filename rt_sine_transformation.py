@@ -10,6 +10,7 @@ from pyqtgraph.Qt import QtCore
 from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QCheckBox, QMessageBox
 from PyQt5.QtCore import QRect
 
+# Global attributes
 fs = 44100
 
 # Instantiate the Essentia Algorithms
@@ -30,18 +31,23 @@ class Rt_sine_transformation(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Load the ui file
         uic.loadUi('rt_sine_transformation.ui', self)
 
+        # Set dark mode to True
         self.dark_mode = True
 
+        # Configure plot
         pg.setConfigOptions(antialias=True)
         self.win = pg.GraphicsLayoutWidget(self)
         self.win.setGeometry(QRect(120, 80, 841, 450))
         self.win.setBackground('#2e2e2e')
 
+        # Get the widgets and connect their callbacks
         self.record_button = self.findChild(QPushButton, "record_btn")
         self.record_button.clicked.connect(lambda: self.record())
 
+        # Get the slider and configure it
         self.slider = self.findChild(QSlider, "verticalSlider")
         self.label = self.findChild(QLabel, "label")
 
@@ -53,6 +59,7 @@ class Rt_sine_transformation(QWidget):
 
         self.listen_checkbox = self.findChild(QCheckBox, "listen_checkbox")
 
+        # Set the recording mode to false
         self.recording = False
 
         self.red_border = self.findChild(QLabel, "red_border")
@@ -62,9 +69,10 @@ class Rt_sine_transformation(QWidget):
         self.reset_button = self.findChild(QPushButton, "reset_btn")
         self.reset_button.clicked.connect(lambda: self.reset_slider())
 
-        # OLD CODE FROM PREVIOUS APP
+        # Initialize a traces dictinoary
         self.traces = dict()
 
+        # Initialize resulting arrays
         self.y = []
         self.frames = []
         self.result = np.array(0)
@@ -84,7 +92,7 @@ class Rt_sine_transformation(QWidget):
         sp_xaxis = pg.AxisItem(orientation='bottom')
         sp_xaxis.setTicks([sp_xlabels])
 
-        # Add plots to the window
+        # Add plots to the window and configure it
         self.waveform = self.win.addPlot(
             title='WAVEFORM', row=0, col=0, axisItems={'bottom': wf_xaxis, 'left': wf_yaxis},
         )
@@ -99,14 +107,13 @@ class Rt_sine_transformation(QWidget):
 
         self.spectrum.hideAxis('left')
 
+        # Keep iterations count to know if we need an auxiliary frame or not from the audio (ensure hops)
         self.iterations = 0
         self.wf_data = np.array([])
         self.listening = False
 
-        # self.prova = np.array([])
-
-        # PyAudio Stuff
-        self.FORMAT = pyaudio.paFloat32
+        # PyAudio stream initialization
+        self.FORMAT = pyaudio.paFloat32  # Floats as data captured
         self.CHANNELS = 1  # Mono
         self.RATE = fs  # Sampling rate in Hz (samples/second)
         self.CHUNK = 2048  # Number of samples per frame (audio frame with frameSize = 2048)
@@ -124,21 +131,19 @@ class Rt_sine_transformation(QWidget):
 
         # Waveform and Spectrum x-axis points (bins and Hz)
         self.freqs = np.arange(0, self.CHUNK)
-        # Waveform and Spectrum x-axis points (bins and Hz)
-        self.z = np.arange(0, self.CHUNK)
-        # Waveform and Spectrum x-axis points (bins and Hz)
-        self.j = np.arange(0, 512)
         # Half spectrum because of essentia computation
         self.f = np.linspace(0, self.RATE // 2, self.CHUNK // 2 + 1)  # 1025 numbers from 0 to 22050 (frequencies)
 
+        # Counter to change the recording button state and appearance of window when recording
         self.counter = 0
         self.recordings = 0
 
+    # Callback for when the recording button is pressed
     def record(self):
-
         self.counter += 1
         self.recording = not self.recording
 
+        # If we were not recording now we are so change the style of the button and the window
         if self.recording:
             self.red_border.setStyleSheet("border:2px solid red;"
                                           "border-radius:10px;")
@@ -147,6 +152,7 @@ class Rt_sine_transformation(QWidget):
                                                 "border-radius:8px;")
             self.record_button.setText("STOP")
 
+        # If we were recording we stop recording and save the result
         if self.counter % 2 == 0:
             self.recordings += 1
             self.red_border.setStyleSheet("border:none;")
@@ -159,17 +165,21 @@ class Rt_sine_transformation(QWidget):
             self.record_button.setText("Record")
             self.saveResult()
 
+    # Method to change the value of the slider
     def slide_it(self, value):
         r = 2 ** (1 / 12)
-        self.multiplicator = r ** (float(value) / 100)
-        self.label.setText("{0:.4g}".format(round(float(value) / 100,1)))
+        self.multiplicator = r ** (float(value) / 100)  # Keep the value of the multiplicator with semitones
+        self.label.setText("{0:.4g}".format(round(float(value) / 100, 1)))
 
+    # Method to reset the slider value
     def reset_slider(self):
         self.slider.setValue(0)
         self.multiplicator = 1.0
 
+    # Method to set the data for the different plots
     def set_plotdata(self, name, data_x, data_y):
 
+        # If it is the first time of the plot we set a new one, if not we set the data to it
         if name in self.traces:
             self.traces[name].setData(data_x, data_y)
 
@@ -177,16 +187,16 @@ class Rt_sine_transformation(QWidget):
             if name == 'waveform':
                 self.traces[name] = self.waveform.plot(pen='c', width=3)
                 self.waveform.setYRange(-0.05, 0.05, padding=0)
-                # self.waveform.setXRange(0, self.CHUNK, padding=0.005)
 
             if name == 'spectrum':
                 self.traces[name] = self.spectrum.plot(pen='m', width=3)
                 self.spectrum.setLogMode(x=True, y=True)
                 self.spectrum.setYRange(np.log10(0.001), np.log10(20), padding=0)
-                # self.spectrum.setXRange(np.log10(20), np.log10(self.RATE / 2), padding=0.005)
 
+    # Method to update the plots iteratively
     def update_plots(self):
 
+        # We get parts of the previous frame data to ensure the hop between frames (H=512)
         previous_wf_data1 = self.wf_data[511:2048]
         previous_wf_data2 = self.wf_data[1023:2048]
         previous_wf_data3 = self.wf_data[1535:2048]
@@ -194,45 +204,42 @@ class Rt_sine_transformation(QWidget):
         # Get the data from the mic
         self.wf_data = self.stream.read(self.CHUNK, exception_on_overflow=False)
 
-        # Unpack the data as ints
+        # Unpack the data as floats
         self.wf_data = np.array(
             struct.unpack(str(self.CHUNK) + 'f',
-                          self.wf_data))  # str(self.CHUNK) + 'h' denotes size and type of data
+                          self.wf_data))  # str(self.CHUNK) + 'f' denotes size and type of data
 
-        # self.prova = np.append(self.prova, self.wf_data)
-
-        # Aqui hem llegit un frame de 2048 samples provinent del micro, el plotegem
+        # Plot a captured 2048 samples frame from the mic
         self.set_plotdata(name='waveform', data_x=self.freqs, data_y=self.wf_data)
 
-        # Li apliquem windowing i ho plotegem
-        # self.set_plotdata(name='w_waveform', data_x=self.z, data_y=w(self.wf_data))
-
-        # Apliquem la fft al windowed frame
+        # Apply FFT to the windowed frame
         fft_signal = fft(w(self.wf_data))
 
-        # Sine Analysis to get tfreq for the current frame
-        sine_anal = sineAnal(fft_signal)  # li entra una fft de 1025 samples
+        # Sine Analysis to the FFT signal to get tfreq for the current frame
+        sine_anal = sineAnal(fft_signal)
 
         # Frequency scaling values
-        ysfreq = sine_anal[0] * self.multiplicator  # scale of frequencies
+        ysfreq = sine_anal[0] * self.multiplicator  # Scale of frequencies (where the magic happens)
 
-        # Synthesis (with OverlapAdd and IFFT)
-        fft_synth = sineSynth(sine_anal[1], ysfreq, sine_anal[2])  # retorna un frame de 1025 samples
+        # Sinusoidal Synthesis (with OverlapAdd and IFFT)
+        fft_synth = sineSynth(sine_anal[1], ysfreq, sine_anal[2])
 
+        # Set the spectrum data and plot it
         sp_data = np.abs(fft(self.wf_data))
-
         self.set_plotdata(name='spectrum', data_x=self.f, data_y=sp_data)
 
+        # If we are not in the first iteration of the computations, we need to get auxiliary data to ensure H=512
         if self.iterations != 0:
+
             # First auxiliary waveform
             wf_data1 = np.append(previous_wf_data1, self.wf_data[1:512])
 
             fft1 = fft(w(wf_data1))
             sine_anal1 = sineAnal(fft1)
             ysfreq1 = sine_anal1[0] * self.multiplicator
-            fft_synth1 = sineSynth(sine_anal1[1], ysfreq1, sine_anal1[2])  # retorna un frame de 1025 samples
+            fft_synth1 = sineSynth(sine_anal1[1], ysfreq1, sine_anal1[2])
 
-            out1 = overl(ifft(fft_synth1))  # Tenim un frame de 512 samples
+            out1 = overl(ifft(fft_synth1))  # We have a 512 samples frame
 
             # Second auxiliary waveform
             wf_data2 = np.append(previous_wf_data2, self.wf_data[1:1024])
@@ -240,9 +247,9 @@ class Rt_sine_transformation(QWidget):
             fft2 = fft(w(wf_data2))
             sine_anal2 = sineAnal(fft2)
             ysfreq2 = sine_anal2[0] * self.multiplicator
-            fft_synth2 = sineSynth(sine_anal2[1], ysfreq2, sine_anal2[2])  # retorna un frame de 1025 samples
+            fft_synth2 = sineSynth(sine_anal2[1], ysfreq2, sine_anal2[2])
 
-            out2 = overl(ifft(fft_synth2))  # Tenim un frame de 512 samples
+            out2 = overl(ifft(fft_synth2))  # We have a 512 samples frame
 
             # Third auxiliary waveform
             wf_data3 = np.append(previous_wf_data3, self.wf_data[1:1536])
@@ -250,24 +257,24 @@ class Rt_sine_transformation(QWidget):
             fft3 = fft(w(wf_data3))
             sine_anal3 = sineAnal(fft3)
             ysfreq3 = sine_anal3[0] * self.multiplicator
-            fft_synth3 = sineSynth(sine_anal3[1], ysfreq3, sine_anal3[2])  # retorna un frame de 1025 samples
+            fft_synth3 = sineSynth(sine_anal3[1], ysfreq3, sine_anal3[2])
 
-            out3 = overl(ifft(fft_synth3))  # Tenim un frame de 512 samples
+            out3 = overl(ifft(fft_synth3))  # We have a 512 samples frame
 
+            # We append all the auxilary waveforms, and we append also the result to the results array
             self.results = np.append(np.append(out1, out2), out3)
             self.result = np.append(self.result, self.results)
 
-        out = overl(ifft(fft_synth))  # Tenim un frame de 512 samples
-
-        # self.set_plotdata(name='out', data_x=self.j, data_y=out)
+        out = overl(ifft(fft_synth))  # Compute the resulting array
 
         # Save result and play it simultaneously
         self.result = np.append(self.result, out)
 
+        # If we are recording, we capture the result in another array to not lose it in the following cut
         if self.recording:
             self.result2 = self.result
 
-        # We cut the signal to not lag the program with large arrays
+        # We cut the signal to not lag the program with large arrays while we are not recording
         if len(self.result) >= 4097 and not self.recording:
             self.result = self.result[len(self.result) - 4096:]
 
@@ -277,16 +284,19 @@ class Rt_sine_transformation(QWidget):
             sd.play(np.array(self.result[len(self.result) - 4096:]), fs)
         self.iterations = 1
 
+    # Method that ensure the real-time visualization by using a QTimer and calling the update plots method
     def animation(self):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_plots)
         self.timer.start(0)
 
+    # Method to save the result
     def saveResult(self):
-        filename = 'output_rt_sinusoidal_' + str(self.recordings) + '.wav'
+        filename = 'output_rt_sinusoidal_' + str(self.recordings) + '.wav'  # Keep track of the number of recordings
         awrite = es.MonoWriter(filename=filename, sampleRate=fs)
         awrite(self.result2)
 
+        # Set up a dialog to inform the user that their file is saved correctly
         dialog = QMessageBox(self)
         dialog.setText('File saved as ' + filename)
         dialog.setWindowTitle('File saved!')
@@ -298,6 +308,7 @@ class Rt_sine_transformation(QWidget):
                                  'color:black;')
         dialog.exec_()
 
+    # Method in charge of changing the stylesheet of the window to change the theme of the application
     def change_theme(self):
         if self.dark_mode:
             self.win.setBackground('#2e2e2e')

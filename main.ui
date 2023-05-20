@@ -134,7 +134,7 @@ QSlider:hover {
      <string>RTST</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="essentia_label">
     <property name="geometry">
      <rect>
       <x>10</x>

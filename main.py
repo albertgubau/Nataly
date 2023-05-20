@@ -9,9 +9,14 @@ from rt_sine_transformation import Rt_sine_transformation
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        # Load the ui file
         uic.loadUi('main.ui', self)
 
+        # Initially we will always be on dark mode (I like it)
         self.dark_mode = True
+
+        # Get the widgets of the interface and connect them with their callbacks
         self.essentia_logo = self.findChild(QLabel, "essentia_logo")
         self.nataly_logo = self.findChild(QLabel, "nataly_logo")
 
@@ -27,22 +32,26 @@ class MainWindow(QMainWindow):
         self.rt_sine_trans_tab = Rt_sine_transformation()
         self.stackedWidget.addWidget(self.rt_sine_trans_tab)
 
+        # Change theme button
         self.change_theme_btn = self.findChild(QPushButton, "change_theme_btn")
         self.change_theme_btn.clicked.connect(lambda: self.change_theme())
         self.change_theme_btn.setText('\u263C')
 
+    # Method to go to the first page (Spectrogram Sound Analyzer)
     def go_to_first(self):
         self.page2_btn.setStyleSheet('')
         self.page1_btn.setStyleSheet('border:3px solid gray;')
         self.stackedWidget.setCurrentIndex(0)
         self.rt_sine_trans_tab.listening = False
 
+    # Method to go to the second page (Real-Time Sinusoidal Transformation)
     def go_to_second(self):
         self.page1_btn.setStyleSheet('')
         self.page2_btn.setStyleSheet('border:3px solid gray;')
         self.stackedWidget.setCurrentIndex(1)
         self.rt_sine_trans_tab.listening = True
 
+    # Method in charge of changing the stylesheet of the window to change the theme of the application
     def change_theme(self):
 
         if self.dark_mode:
@@ -177,7 +186,7 @@ class MainWindow(QMainWindow):
 
         self.dark_mode = not self.dark_mode
 
-
+# Executing loop
 if __name__ == '__main__':
     app = QApplication([])
     window = MainWindow()
