@@ -604,19 +604,6 @@ color:black;
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="help_btn">
-   <property name="geometry">
-    <rect>
-     <x>980</x>
-     <y>10</y>
-     <width>21</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>?</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="semitones_lbl">
    <property name="geometry">
     <rect>
@@ -636,6 +623,19 @@ color:black;
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="help_btn">
+   <property name="geometry">
+    <rect>
+     <x>980</x>
+     <y>10</y>
+     <width>21</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>?</string>
+   </property>
+  </widget>
   <zorder>changed_params</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
@@ -649,8 +649,8 @@ color:black;
   <zorder>play_original_btn</zorder>
   <zorder>pause_original_btn</zorder>
   <zorder>not_applied_label</zorder>
-  <zorder>help_btn</zorder>
   <zorder>semitones_lbl</zorder>
+  <zorder>help_btn</zorder>
  </widget>
  <resources/>
  <connections/>

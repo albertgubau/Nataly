@@ -7,14 +7,16 @@ import sounddevice as sd
 from PyQt5 import uic
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
-from PyQt5.QtWidgets import QWidget, QPushButton, QSlider, QLabel, QCheckBox, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, QCheckBox, QMessageBox
 from PyQt5.QtCore import QRect
+
+from rt_sine_help_window import Ui_RTSineHelpWindow
 
 # Global attributes
 fs = 44100
 
 # Instantiate the Essentia Algorithms
-w = es.Windowing(type='hamming', size=2048)
+w = es.Windowing(type='hamming', size=2000)
 fft = es.FFT(size=2048)
 sineAnal = es.SineModelAnal(sampleRate=fs,
                             maxnSines=150,
@@ -44,6 +46,9 @@ class Rt_sine_transformation(QWidget):
         self.win.setBackground('#2e2e2e')
 
         # Get the widgets and connect their callbacks
+        self.help_btn = self.findChild(QPushButton, "help_btn")
+        self.help_btn.clicked.connect(lambda: self.open_help_window())
+
         self.record_button = self.findChild(QPushButton, "record_btn")
         self.record_button.clicked.connect(lambda: self.record())
 
@@ -186,12 +191,12 @@ class Rt_sine_transformation(QWidget):
         else:
             if name == 'waveform':
                 self.traces[name] = self.waveform.plot(pen='c', width=3)
-                self.waveform.setYRange(-0.05, 0.05, padding=0)
+                #self.waveform.setYRange(-0.05, 0.05, padding=0)
 
             if name == 'spectrum':
                 self.traces[name] = self.spectrum.plot(pen='m', width=3)
                 self.spectrum.setLogMode(x=True, y=True)
-                self.spectrum.setYRange(np.log10(0.001), np.log10(20), padding=0)
+                #self.spectrum.setYRange(np.log10(0.001), np.log10(20), padding=0)
 
     # Method to update the plots iteratively
     def update_plots(self):
@@ -320,3 +325,10 @@ class Rt_sine_transformation(QWidget):
             if not self.recording:
                 self.recording_label.setStyleSheet('color: #eaebeb')
                 self.recording_circle.setStyleSheet('background-color:#eaebeb')
+
+    # Method to open a help window
+    def open_help_window(self):
+        self.window = QMainWindow()
+        self.ui = Ui_RTSineHelpWindow()
+        self.ui.setupUi(self.window)
+        self.window.show()

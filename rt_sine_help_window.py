@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'spec_help_window.ui'
+# Form implementation generated from reading ui file 'rt_sine_help_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -11,72 +11,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_SpecHelpWindow(object):
-    def setupUi(self, SpecHelpWindow):
-        SpecHelpWindow.setObjectName("SpecHelpWindow")
-        SpecHelpWindow.resize(880, 573)
-        SpecHelpWindow.setStyleSheet("\n"
-"\n"
-"")
-        self.centralwidget = QtWidgets.QWidget(SpecHelpWindow)
+class Ui_RTSineHelpWindow(object):
+    def setupUi(self, RTSineHelpWindow):
+        RTSineHelpWindow.setObjectName("RTSineHelpWindow")
+        RTSineHelpWindow.resize(880, 573)
+        RTSineHelpWindow.setStyleSheet("")
+        self.centralwidget = QtWidgets.QWidget(RTSineHelpWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(10, 10, 861, 521))
-        self.scrollArea.setStyleSheet("QScrollBar{\n"
-"    border:none;\n"
-"}\n"
-"QScrollBar:vertical {\n"
-"    border: none;\n"
-"    background: gray;\n"
-"    width: 14px;\n"
-"    margin: 15px 0 15px 0;\n"
-"    border-radius: 0px;\n"
-" }\n"
-"\n"
-"QScrollBar::handle:vertical {    \n"
-"    background-color: #0096ff;\n"
-"    min-height: 30px;\n"
-"    border-radius: 7px;\n"
-"}\n"
-"QScrollBar::handle:vertical:hover{    \n"
-"    background-color: rgb(28, 113, 216);\n"
-"\n"
-"}\n"
-"QScrollBar::handle:vertical:pressed {    \n"
-"    background-color: rgb(28, 113, 216);\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical {\n"
-"    border: none;\n"
-"    background-color:gray;\n"
-"    height: 15px;\n"
-"    border-top-left-radius: 7px;\n"
-"    border-top-right-radius: 7px;\n"
-"    subcontrol-position: top;\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QScrollBar::sub-line:vertical:hover {    \n"
-"    background-color: black;\n"
-"}\n"
-"QScrollBar::sub-line:vertical:pressed {    \n"
-"    background-color: black;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:vertical {\n"
-"    border: none;\n"
-"    background-color: gray;\n"
-"    height: 15px;\n"
-"    border-bottom-left-radius: 7px;\n"
-"    border-bottom-right-radius: 7px;\n"
-"    subcontrol-position: bottom;\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QScrollBar::add-line:vertical:hover {    \n"
-"    background-color: black;\n"
-"}\n"
-"QScrollBar::add-line:vertical:pressed {    \n"
-"    background-color: black;\n"
-"}\n"
+        self.scrollArea.setStyleSheet("\n"
 "\n"
 "\n"
 "\n"
@@ -130,30 +74,30 @@ class Ui_SpecHelpWindow(object):
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.frame)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        SpecHelpWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(SpecHelpWindow)
+        RTSineHelpWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(RTSineHelpWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 880, 22))
         self.menubar.setObjectName("menubar")
-        SpecHelpWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(SpecHelpWindow)
+        RTSineHelpWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(RTSineHelpWindow)
         self.statusbar.setObjectName("statusbar")
-        SpecHelpWindow.setStatusBar(self.statusbar)
+        RTSineHelpWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(SpecHelpWindow)
-        QtCore.QMetaObject.connectSlotsByName(SpecHelpWindow)
+        self.retranslateUi(RTSineHelpWindow)
+        QtCore.QMetaObject.connectSlotsByName(RTSineHelpWindow)
 
-    def retranslateUi(self, SpecHelpWindow):
+    def retranslateUi(self, RTSineHelpWindow):
         _translate = QtCore.QCoreApplication.translate
-        SpecHelpWindow.setWindowTitle(_translate("SpecHelpWindow", "Help Window"))
-        self.label.setText(_translate("SpecHelpWindow", "What is a Spectrogram?"))
-        self.label_4.setText(_translate("SpecHelpWindow", "How does this work?"))
+        RTSineHelpWindow.setWindowTitle(_translate("RTSineHelpWindow", "Help Window"))
+        self.label.setText(_translate("RTSineHelpWindow", "What is a Spectrogram?"))
+        self.label_4.setText(_translate("RTSineHelpWindow", "How does this work?"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    SpecHelpWindow = QtWidgets.QMainWindow()
-    ui = Ui_SpecHelpWindow()
-    ui.setupUi(SpecHelpWindow)
-    SpecHelpWindow.show()
+    RTSineHelpWindow = QtWidgets.QMainWindow()
+    ui = Ui_RTSineHelpWindow()
+    ui.setupUi(RTSineHelpWindow)
+    RTSineHelpWindow.show()
     sys.exit(app.exec_())

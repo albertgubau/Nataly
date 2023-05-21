@@ -511,3 +511,4 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.ui = Ui_SpecHelpWindow()
         self.ui.setupUi(self.window)
         self.window.show()
+

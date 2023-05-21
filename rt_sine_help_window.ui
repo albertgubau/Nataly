@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SpecHelpWindow</class>
- <widget class="QMainWindow" name="SpecHelpWindow">
+ <class>RTSineHelpWindow</class>
+ <widget class="QMainWindow" name="RTSineHelpWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,9 +14,7 @@
    <string>Help Window</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-
-</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QScrollArea" name="scrollArea">
@@ -29,61 +27,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QScrollBar{
-	border:none;
-}
-QScrollBar:vertical {
-	border: none;
-    background: gray;
-    width: 14px;
-    margin: 15px 0 15px 0;
-	border-radius: 0px;
- }
-
-QScrollBar::handle:vertical {	
-	background-color: #0096ff;
-	min-height: 30px;
-	border-radius: 7px;
-}
-QScrollBar::handle:vertical:hover{	
-	background-color: rgb(28, 113, 216);
-
-}
-QScrollBar::handle:vertical:pressed {	
-	background-color: rgb(28, 113, 216);
-}
-
-QScrollBar::sub-line:vertical {
-	border: none;
-	background-color:gray;
-	height: 15px;
-	border-top-left-radius: 7px;
-	border-top-right-radius: 7px;
-	subcontrol-position: top;
-	subcontrol-origin: margin;
-}
-QScrollBar::sub-line:vertical:hover {	
-	background-color: black;
-}
-QScrollBar::sub-line:vertical:pressed {	
-	background-color: black;
-}
-
-QScrollBar::add-line:vertical {
-	border: none;
-	background-color: gray;
-	height: 15px;
-	border-bottom-left-radius: 7px;
-	border-bottom-right-radius: 7px;
-	subcontrol-position: bottom;
-	subcontrol-origin: margin;
-}
-QScrollBar::add-line:vertical:hover {	
-	background-color: black;
-}
-QScrollBar::add-line:vertical:pressed {	
-	background-color: black;
-}
+     <string notr="true">
 
 
 
