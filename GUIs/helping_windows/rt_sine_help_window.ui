@@ -27,7 +27,61 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">
+     <string notr="true">QScrollBar{
+	border:none;
+}
+QScrollBar:vertical {
+	border: none;
+    background: gray;
+    width: 14px;
+    margin: 15px 0 15px 0;
+	border-radius: 0px;
+ }
+
+QScrollBar::handle:vertical {	
+	background-color: #0096ff;
+	min-height: 30px;
+	border-radius: 7px;
+}
+QScrollBar::handle:vertical:hover{	
+	background-color: rgb(28, 113, 216);
+
+}
+QScrollBar::handle:vertical:pressed {	
+	background-color: rgb(28, 113, 216);
+}
+
+QScrollBar::sub-line:vertical {
+	border: none;
+	background-color:gray;
+	height: 15px;
+	border-top-left-radius: 7px;
+	border-top-right-radius: 7px;
+	subcontrol-position: top;
+	subcontrol-origin: margin;
+}
+QScrollBar::sub-line:vertical:hover {	
+	background-color: black;
+}
+QScrollBar::sub-line:vertical:pressed {	
+	background-color: black;
+}
+
+QScrollBar::add-line:vertical {
+	border: none;
+	background-color: gray;
+	height: 15px;
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+	subcontrol-position: bottom;
+	subcontrol-origin: margin;
+}
+QScrollBar::add-line:vertical:hover {	
+	background-color: black;
+}
+QScrollBar::add-line:vertical:pressed {	
+	background-color: black;
+}
 
 
 
@@ -42,7 +96,7 @@
        <x>0</x>
        <y>0</y>
        <width>845</width>
-       <height>1218</height>
+       <height>888</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -54,7 +108,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>1200</height>
+          <height>870</height>
          </size>
         </property>
         <property name="styleSheet">
@@ -71,7 +125,7 @@ background-color:transparent;</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>550</y>
+           <y>460</y>
            <width>301</width>
            <height>41</height>
           </rect>
@@ -85,16 +139,16 @@ background-color:transparent;</string>
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>What is a Spectrogram?</string>
+          <string>What is a Spectrum?</string>
          </property>
         </widget>
         <widget class="QLabel" name="label_2">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>610</y>
-           <width>671</width>
-           <height>581</height>
+           <y>510</y>
+           <width>791</width>
+           <height>331</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -106,7 +160,7 @@ border-radius:10px;</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>assets/spec_anal_help.drawio.png</pixmap>
+          <pixmap>../../assets/spectrum_help.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -139,7 +193,7 @@ border-radius:10px;</string>
            <x>10</x>
            <y>60</y>
            <width>801</width>
-           <height>451</height>
+           <height>361</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -151,7 +205,7 @@ border-radius:10px;</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>assets/help_spec_anal.png</pixmap>
+          <pixmap>../../assets/help_rt_sine_transformations.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

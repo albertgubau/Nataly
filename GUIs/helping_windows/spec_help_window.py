@@ -15,9 +15,7 @@ class Ui_SpecHelpWindow(object):
     def setupUi(self, SpecHelpWindow):
         SpecHelpWindow.setObjectName("SpecHelpWindow")
         SpecHelpWindow.resize(880, 573)
-        SpecHelpWindow.setStyleSheet("\n"
-"\n"
-"")
+        SpecHelpWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(SpecHelpWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
@@ -109,7 +107,8 @@ class Ui_SpecHelpWindow(object):
 "padding:10px;\n"
 "border-radius:10px;")
         self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap("assets/spec_anal_help.drawio.png"))
+        self.label_2.setTextFormat(QtCore.Qt.AutoText)
+        self.label_2.setPixmap(QtGui.QPixmap("assets/spec_help.png"))
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
         self.label_4 = QtWidgets.QLabel(self.frame)
@@ -125,7 +124,8 @@ class Ui_SpecHelpWindow(object):
 "padding:2px;\n"
 "border-radius:10px;")
         self.label_3.setText("")
-        self.label_3.setPixmap(QtGui.QPixmap("assets/help_spec_anal.png"))
+        self.label_3.setTextFormat(QtCore.Qt.AutoText)
+        self.label_3.setPixmap(QtGui.QPixmap("assets/help_spec_synth.png"))
         self.label_3.setScaledContents(True)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.frame)

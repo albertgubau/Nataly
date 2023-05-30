@@ -14,9 +14,7 @@
    <string>Help Window</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-
-</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QScrollArea" name="scrollArea">
@@ -162,7 +160,7 @@ border-radius:10px;</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>assets/spec_anal_help.drawio.png</pixmap>
+          <pixmap>../../assets/spec_help.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -206,8 +204,11 @@ border-radius:10px;</string>
          <property name="text">
           <string/>
          </property>
+         <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+         </property>
          <property name="pixmap">
-          <pixmap>assets/help_spec_anal.png</pixmap>
+          <pixmap>../../assets/help_spec_synth.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

@@ -20,7 +20,61 @@ class Ui_RTSineHelpWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(10, 10, 861, 521))
-        self.scrollArea.setStyleSheet("\n"
+        self.scrollArea.setStyleSheet("QScrollBar{\n"
+"    border:none;\n"
+"}\n"
+"QScrollBar:vertical {\n"
+"    border: none;\n"
+"    background: gray;\n"
+"    width: 14px;\n"
+"    margin: 15px 0 15px 0;\n"
+"    border-radius: 0px;\n"
+" }\n"
+"\n"
+"QScrollBar::handle:vertical {    \n"
+"    background-color: #0096ff;\n"
+"    min-height: 30px;\n"
+"    border-radius: 7px;\n"
+"}\n"
+"QScrollBar::handle:vertical:hover{    \n"
+"    background-color: rgb(28, 113, 216);\n"
+"\n"
+"}\n"
+"QScrollBar::handle:vertical:pressed {    \n"
+"    background-color: rgb(28, 113, 216);\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical {\n"
+"    border: none;\n"
+"    background-color:gray;\n"
+"    height: 15px;\n"
+"    border-top-left-radius: 7px;\n"
+"    border-top-right-radius: 7px;\n"
+"    subcontrol-position: top;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"QScrollBar::sub-line:vertical:hover {    \n"
+"    background-color: black;\n"
+"}\n"
+"QScrollBar::sub-line:vertical:pressed {    \n"
+"    background-color: black;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical {\n"
+"    border: none;\n"
+"    background-color: gray;\n"
+"    height: 15px;\n"
+"    border-bottom-left-radius: 7px;\n"
+"    border-bottom-right-radius: 7px;\n"
+"    subcontrol-position: bottom;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"QScrollBar::add-line:vertical:hover {    \n"
+"    background-color: black;\n"
+"}\n"
+"QScrollBar::add-line:vertical:pressed {    \n"
+"    background-color: black;\n"
+"}\n"
 "\n"
 "\n"
 "\n"
@@ -28,32 +82,32 @@ class Ui_RTSineHelpWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 845, 1218))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 845, 888))
         self.scrollAreaWidgetContents.setStyleSheet("")
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
-        self.frame.setMinimumSize(QtCore.QSize(0, 1200))
+        self.frame.setMinimumSize(QtCore.QSize(0, 870))
         self.frame.setStyleSheet("border:none;\n"
 "background-color:transparent;")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.label = QtWidgets.QLabel(self.frame)
-        self.label.setGeometry(QtCore.QRect(10, 550, 301, 41))
+        self.label.setGeometry(QtCore.QRect(10, 460, 301, 41))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
         self.label.setStyleSheet("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.frame)
-        self.label_2.setGeometry(QtCore.QRect(10, 610, 671, 581))
+        self.label_2.setGeometry(QtCore.QRect(10, 510, 791, 331))
         self.label_2.setStyleSheet("background-color:white;\n"
 "padding:10px;\n"
 "border-radius:10px;")
         self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap("assets/spec_anal_help.drawio.png"))
+        self.label_2.setPixmap(QtGui.QPixmap("assets/spectrum_help.png"))
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
         self.label_4 = QtWidgets.QLabel(self.frame)
@@ -64,12 +118,12 @@ class Ui_RTSineHelpWindow(object):
         self.label_4.setStyleSheet("")
         self.label_4.setObjectName("label_4")
         self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 451))
+        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 361))
         self.label_3.setStyleSheet("background-color:white;\n"
 "padding:2px;\n"
 "border-radius:10px;")
         self.label_3.setText("")
-        self.label_3.setPixmap(QtGui.QPixmap("assets/help_spec_anal.png"))
+        self.label_3.setPixmap(QtGui.QPixmap("assets/help_rt_sine_transformations.png"))
         self.label_3.setScaledContents(True)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.frame)
@@ -89,7 +143,7 @@ class Ui_RTSineHelpWindow(object):
     def retranslateUi(self, RTSineHelpWindow):
         _translate = QtCore.QCoreApplication.translate
         RTSineHelpWindow.setWindowTitle(_translate("RTSineHelpWindow", "Help Window"))
-        self.label.setText(_translate("RTSineHelpWindow", "What is a Spectrogram?"))
+        self.label.setText(_translate("RTSineHelpWindow", "What is a Spectrum?"))
         self.label_4.setText(_translate("RTSineHelpWindow", "How does this work?"))
 
 
