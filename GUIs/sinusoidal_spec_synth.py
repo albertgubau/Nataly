@@ -4,19 +4,19 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, 
 from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
-from spec_help_window import Ui_SpecHelpWindow
+from GUIs.spec_help_window import Ui_SpecHelpWindow
 
 import numpy as np
 import essentia.standard as es
 import sounddevice as sd
 
 
-class Sinusoidal_Spec_Anal(QWidget):
+class Sinusoidal_Spec_Synth(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Load the ui file
-        uic.loadUi('sinusoidal_spec_anal.ui', self)
+        uic.loadUi('GUIs/sinusoidal_spec_synth.ui', self)
 
         # Initially we will always be on dark mode and the there is no need of showing not applied changes
         self.dark_mode = True
@@ -39,7 +39,7 @@ class Sinusoidal_Spec_Anal(QWidget):
 
         self.window_size_inpt = self.findChild(QLineEdit, "window_size_inpt")
         self.window_size_inpt.setEnabled(False)
-        self.window_size_inpt.setText('2000')
+        self.window_size_inpt.setText('2001')
         self.window_size_inpt.textChanged.connect(lambda: self.changed_inputs())
 
         self.reset_default_btn = self.findChild(QPushButton, "reset_default_btn")
@@ -89,7 +89,7 @@ class Sinusoidal_Spec_Anal(QWidget):
         self.M = int(self.window_size_inpt.text())
 
         # Instantiate the Essentia Algorithms
-        self.w = es.Windowing(type=self.combo.currentText(), size=self.M - 1)
+        self.w = es.Windowing(type=self.combo.currentText(), size=self.M)
         self.spectrum = es.Spectrum()
         self.fft = es.FFT(size=self.N)
         self.sineAnal = es.SineModelAnal(sampleRate=self.fs,

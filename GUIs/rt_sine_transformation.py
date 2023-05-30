@@ -10,17 +10,17 @@ from pyqtgraph.Qt import QtCore
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, QCheckBox, QMessageBox
 from PyQt5.QtCore import QRect
 
-from rt_sine_help_window import Ui_RTSineHelpWindow
+from GUIs.rt_sine_help_window import Ui_RTSineHelpWindow
 
 # Global attributes
 fs = 44100
 
 # Instantiate the Essentia Algorithms
-w = es.Windowing(type='hamming', size=2000)
+w = es.Windowing(type='hamming', size=2001)
 fft = es.FFT(size=2048)
 sineAnal = es.SineModelAnal(sampleRate=fs,
                             maxnSines=150,
-                            magnitudeThreshold=-120,
+                            magnitudeThreshold=-80,
                             freqDevOffset=10,
                             freqDevSlope=0.001)
 
@@ -34,7 +34,7 @@ class Rt_sine_transformation(QWidget):
         super().__init__(*args, **kwargs)
 
         # Load the ui file
-        uic.loadUi('rt_sine_transformation.ui', self)
+        uic.loadUi('GUIs/rt_sine_transformation.ui', self)
 
         # Set dark mode to True
         self.dark_mode = True

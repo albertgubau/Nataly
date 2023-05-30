@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1167</width>
-    <height>630</height>
+    <width>1165</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,7 +115,7 @@ QSlider:hover {
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>SMSA</string>
+     <string>SMSS</string>
     </property>
    </widget>
    <widget class="QPushButton" name="page2_btn">
@@ -244,7 +244,7 @@ QPushButton:hover {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1167</width>
+     <width>1165</width>
      <height>22</height>
     </rect>
    </property>

@@ -37,7 +37,7 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>Sinusoidal Model Spectrogram Analyzer</string>
+    <string>Spectrogram Sound Synthesizer</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="filename">

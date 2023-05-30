@@ -2,8 +2,8 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton
 from PyQt5.QtGui import QPixmap
 
-from sinusoidal_spec_anal import Sinusoidal_Spec_Anal
-from rt_sine_transformation import Rt_sine_transformation
+from GUIs.sinusoidal_spec_synth import Sinusoidal_Spec_Synth
+from GUIs.rt_sine_transformation import Rt_sine_transformation
 
 
 class MainWindow(QMainWindow):
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.page2_btn.clicked.connect(self.go_to_second)
 
         # First page
-        self.sinusoidal_spec_anal_tab = Sinusoidal_Spec_Anal()
+        self.sinusoidal_spec_anal_tab = Sinusoidal_Spec_Synth()
         self.stackedWidget.addWidget(self.sinusoidal_spec_anal_tab)  # Add page to the stacked widget
 
         # Third page
