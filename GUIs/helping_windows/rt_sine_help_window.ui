@@ -125,7 +125,7 @@ background-color:transparent;</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>460</y>
+           <y>450</y>
            <width>301</width>
            <height>41</height>
           </rect>
@@ -146,7 +146,7 @@ background-color:transparent;</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>510</y>
+           <y>500</y>
            <width>791</width>
            <height>331</height>
           </rect>
@@ -193,7 +193,7 @@ border-radius:10px;</string>
            <x>10</x>
            <y>60</y>
            <width>801</width>
-           <height>361</height>
+           <height>341</height>
           </rect>
          </property>
          <property name="styleSheet">

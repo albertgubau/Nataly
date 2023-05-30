@@ -107,7 +107,6 @@ class Ui_SpecHelpWindow(object):
 "padding:10px;\n"
 "border-radius:10px;")
         self.label_2.setText("")
-        self.label_2.setTextFormat(QtCore.Qt.AutoText)
         self.label_2.setPixmap(QtGui.QPixmap("assets/spec_help.png"))
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
@@ -119,7 +118,7 @@ class Ui_SpecHelpWindow(object):
         self.label_4.setStyleSheet("")
         self.label_4.setObjectName("label_4")
         self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 451))
+        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 421))
         self.label_3.setStyleSheet("background-color:white;\n"
 "padding:2px;\n"
 "border-radius:10px;")

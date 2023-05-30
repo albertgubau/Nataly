@@ -95,14 +95,14 @@ class Ui_RTSineHelpWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.label = QtWidgets.QLabel(self.frame)
-        self.label.setGeometry(QtCore.QRect(10, 460, 301, 41))
+        self.label.setGeometry(QtCore.QRect(10, 450, 301, 41))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
         self.label.setStyleSheet("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.frame)
-        self.label_2.setGeometry(QtCore.QRect(10, 510, 791, 331))
+        self.label_2.setGeometry(QtCore.QRect(10, 500, 791, 331))
         self.label_2.setStyleSheet("background-color:white;\n"
 "padding:10px;\n"
 "border-radius:10px;")
@@ -118,7 +118,7 @@ class Ui_RTSineHelpWindow(object):
         self.label_4.setStyleSheet("")
         self.label_4.setObjectName("label_4")
         self.label_3 = QtWidgets.QLabel(self.frame)
-        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 361))
+        self.label_3.setGeometry(QtCore.QRect(10, 60, 801, 341))
         self.label_3.setStyleSheet("background-color:white;\n"
 "padding:2px;\n"
 "border-radius:10px;")
