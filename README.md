@@ -61,23 +61,35 @@ And execute the python code inside the main.py file:
 
 # Documentation images
 
-![](documentation_images/ubuntu_dark_spec_analyzer.png)
+![](documentation_images/ubuntu_dark_spec_synth.png)
 
-| Dark Themed Spectrogram Analyzer
+| Dark Themed Spectrogram Sound Synthesizer
 
-![](documentation_images/ubuntu_light_spec_analyzer.png)
+![](documentation_images/ubuntu_light_spec_synth.png)
 
-| Light Themed Spectrogram Analyzer
+| Light Themed Spectrogram Sound Synthesizer
 
 ![](documentation_images/ubuntu_dark_rt_sine_trans.png)
 
-| Dark Theme Real-Time Sinusoidal Transformations
+| Dark Theme Real-Time Sinusoidal Transformation
 
 ![](documentation_images/ubuntu_light_rt_sine_trans.png)
 
-| Light Themed Real-Time Sinusoidal Transformations
+| Light Themed Real-Time Sinusoidal Transformation
 
-![](documentation_images/ubuntu_spec_analyzer_help_window.png)
+![](documentation_images/spectrogram_sound_synth_help.png)
 
-| Sinusoidal Spectrogram Analyzer Helping Window
+| Sinusoidal Spectrogram Synthesizer Helping Window
+
+![](documentation_images/rt_sine_transformation_help.png)
+
+| Real-Time Sinusoidal Transformation Helping Window
+
+![](documentation_images/spectrogram_help.png)
+
+| Spectrogram explanation
+
+![](documentation_images/spectrum_help.png)
+
+| Spectrum explanation
 
