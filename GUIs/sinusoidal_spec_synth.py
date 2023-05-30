@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, 
 from PyQt5.QtCore import QRect
 import pyqtgraph as pg
 
-from GUIs.spec_help_window import Ui_SpecHelpWindow
+from GUIs.helping_windows.spec_help_window import Ui_SpecHelpWindow
 
 import numpy as np
 import essentia.standard as es
