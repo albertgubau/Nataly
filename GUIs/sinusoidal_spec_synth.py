@@ -214,7 +214,7 @@ class Sinusoidal_Spec_Synth(QWidget):
 
     # Method to reset the default analysis/synthesis parameters
     def reset_default_inpts(self):
-        self.window_size_inpt.setText('2000')
+        self.window_size_inpt.setText('2001')
         self.fft_size_inpt.setText('2048')
         self.combo.setCurrentIndex(0)
 
