@@ -10,7 +10,7 @@ from pyqtgraph.Qt import QtCore
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QSlider, QLabel, QCheckBox, QMessageBox
 from PyQt5.QtCore import QRect
 
-from GUIs.helping_windows.rt_sine_help_window import Ui_RTSineHelpWindow
+from helping_windows.rt_sine_help_window import Ui_RTSineHelpWindow
 
 # Global attributes
 fs = 44100
