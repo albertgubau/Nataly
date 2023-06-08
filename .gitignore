@@ -17,7 +17,6 @@
 build
 dist
 *.spec
-*.wav
 
 software/.vs/*
 workspace_dev/*
